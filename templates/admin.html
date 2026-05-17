@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة الأدمن</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI',Tahoma,sans-serif; background:#f0f4f8; color:#1a2a3a; min-height:100vh; }
+
+  /* Header */
+  .header { background:#1a3a5c; color:white; padding:0 28px; height:64px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 8px rgba(0,0,0,0.2); position:sticky; top:0; z-index:100; }
+  .header-left { display:flex; align-items:center; gap:10px; }
+  .header-logo  { font-size:22px; }
+  .header-title { font-size:1rem; font-weight:700; }
+  .header-sub   { font-size:0.72rem; opacity:0.7; }
+  .header-right { display:flex; align-items:center; gap:10px; }
+  .admin-badge  { background:#ffc107; color:#000; padding:4px 12px; border-radius:12px; font-size:0.8rem; font-weight:700; }
+  .btn-logout   { background:rgba(255,255,255,0.15); color:white; border:1px solid rgba(255,255,255,0.3); padding:6px 14px; border-radius:6px; font-size:0.82rem; cursor:pointer; font-family:inherit; transition:background 0.2s; }
+  .btn-logout:hover { background:rgba(255,255,255,0.25); }
+  .header-lang-btn { background:rgba(255,255,255,0.15); color:white; border:1px solid rgba(255,255,255,0.3); padding:6px 14px; border-radius:6px; font-size:0.82rem; font-weight:600; cursor:pointer; font-family:inherit; transition:background 0.2s; }
+  .header-lang-btn:hover { background:rgba(255,255,255,0.25); }
+
+  /* Layout */
+  .content { max-width:1100px; margin:0 auto; padding:28px 20px; }
+
+  /* Tabs */
+  .tabs { display:flex; gap:4px; margin-bottom:22px; background:white; padding:6px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); width:fit-content; }
+  .tab-btn { padding:10px 24px; border:none; border-radius:8px; font-size:0.9rem; font-weight:600; font-family:inherit; cursor:pointer; transition:all 0.2s; background:transparent; color:#6c757d; }
+  .tab-btn.active { background:#1a3a5c; color:white; }
+  .tab-btn:hover:not(.active) { background:#f0f4f8; color:#1a3a5c; }
+  .tab-section { display:none; }
+  .tab-section.active { display:block; }
+
+  /* Grid */
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+
+  /* Card */
+  .card { background:white; border-radius:12px; padding:22px; box-shadow:0 2px 12px rgba(0,0,0,0.07); margin-bottom:20px; }
+  .card-title { font-size:1rem; font-weight:700; color:#1a3a5c; margin-bottom:18px; padding-bottom:10px; border-bottom:2px solid #f0f4f8; display:flex; align-items:center; gap:8px; }
+
+  /* Form */
+  .form-group { margin-bottom:13px; }
+  .form-group label { display:block; font-size:0.82rem; font-weight:600; color:#495057; margin-bottom:5px; }
+  .form-group input,.form-group select { width:100%; padding:10px 13px; border:1.5px solid #dee2e6; border-radius:8px; font-size:0.9rem; font-family:inherit; transition:border-color 0.2s; }
+  .form-group input:focus,.form-group select:focus { outline:none; border-color:#1a3a5c; }
+
+  /* Buttons */
+  .btn { padding:10px 20px; border:none; border-radius:8px; font-size:0.9rem; font-weight:600; font-family:inherit; cursor:pointer; transition:all 0.2s; }
+  .btn-primary { background:#1a3a5c; color:white; width:100%; margin-top:4px; }
+  .btn-primary:hover { background:#142d48; }
+  .btn-danger { background:#dc3545; color:white; padding:5px 14px; font-size:0.8rem; border-radius:6px; border:none; cursor:pointer; font-family:inherit; font-weight:600; transition:background 0.2s; }
+  .btn-danger:hover { background:#b02a37; }
+
+  /* Table */
+  table { width:100%; border-collapse:collapse; font-size:0.87rem; }
+  th { background:#f8f9fa; padding:11px 14px; text-align:right; font-weight:600; color:#495057; border-bottom:2px solid #dee2e6; }
+  html[dir="ltr"] th { text-align:left; }
+  td { padding:11px 14px; border-bottom:1px solid #f0f0f0; vertical-align:middle; }
+  tr:hover td { background:#fafafa; }
+  .role-pill { padding:3px 10px; border-radius:10px; font-size:0.78rem; font-weight:600; }
+  .role-admin     { background:#fff3cd; color:#856404; }
+  .role-radiology { background:#cff4fc; color:#055160; }
+  .role-doctor    { background:#d1e7dd; color:#0a3622; }
+  .file-number { font-weight:700; color:#1a3a5c; font-family:monospace; }
+
+  /* Stats */
+  .stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:22px; }
+  .stat-card { background:white; border-radius:12px; padding:18px 22px; box-shadow:0 2px 12px rgba(0,0,0,0.07); display:flex; align-items:center; gap:14px; }
+  .stat-icon { font-size:28px; width:52px; height:52px; border-radius:12px; display:flex; align-items:center; justify-content:center; }
+  .stat-icon.blue   { background:#e7f0ff; }
+  .stat-icon.green  { background:#d1e7dd; }
+  .stat-icon.yellow { background:#fff3cd; }
+  .stat-num   { font-size:1.7rem; font-weight:700; color:#1a3a5c; }
+  .stat-label { font-size:0.8rem; color:#6c757d; margin-top:2px; }
+
+  /* Checkboxes */
+  .doctors-check-box { border:1.5px solid #dee2e6; border-radius:8px; padding:10px; max-height:160px; overflow-y:auto; }
+  .check-label { display:flex; align-items:center; gap:8px; padding:6px 4px; cursor:pointer; font-size:0.87rem; }
+  .check-label input { width:16px; height:16px; cursor:pointer; }
+
+  /* Empty / Toast */
+  .empty-state { text-align:center; padding:36px; color:#adb5bd; }
+  .empty-state .icon { font-size:36px; margin-bottom:10px; }
+  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); padding:12px 24px; border-radius:10px; font-size:0.88rem; font-weight:600; z-index:9999; opacity:0; transition:opacity 0.3s; pointer-events:none; }
+  .toast.show    { opacity:1; }
+  .toast.success { background:#198754; color:white; }
+  .toast.error   { background:#dc3545; color:white; }
+
+  @media(max-width:768px){ .grid-2{grid-template-columns:1fr;} .stats-row{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="header-logo">⚙️</div>
+    <div>
+      <div class="header-title" data-ar="لوحة تحكم الأدمن"          data-en="Admin Dashboard">لوحة تحكم الأدمن</div>
+      <div class="header-sub"   data-ar="Medical Image Encryption System" data-en="Medical Image Encryption System">Medical Image Encryption System</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="admin-badge" data-ar="👑 مدير النظام" data-en="👑 System Admin">👑 مدير النظام</span>
+    <button class="header-lang-btn" onclick="toggleLang()" id="lang-btn">🌐 English</button>
+    <button class="btn-logout" onclick="logout()" data-ar="تسجيل الخروج" data-en="Sign Out">تسجيل الخروج</button>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon blue">👥</div>
+      <div><div class="stat-num" id="stat-users">—</div><div class="stat-label" data-ar="إجمالي المستخدمين" data-en="Total Users">إجمالي المستخدمين</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green">🗂️</div>
+      <div><div class="stat-num" id="stat-patients">—</div><div class="stat-label" data-ar="إجمالي المرضى" data-en="Total Patients">إجمالي المرضى</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon yellow">🔒</div>
+      <div><div class="stat-num" id="stat-images">—</div><div class="stat-label" data-ar="صور مشفّرة" data-en="Encrypted Images">صور مشفّرة</div></div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('users',this)"   data-ar="👥 المستخدمون" data-en="👥 Users">👥 المستخدمون</button>
+    <button class="tab-btn"        onclick="switchTab('patients',this)" data-ar="🗂️ المرضى"     data-en="🗂️ Patients">🗂️ المرضى</button>
+  </div>
+
+  <!-- ===== Users Tab ===== -->
+  <div id="tab-users" class="tab-section active">
+    <div class="grid-2">
+
+      <!-- Add User -->
+      <div class="card">
+        <div class="card-title" data-ar="➕ إضافة مستخدم جديد" data-en="➕ Add New User">➕ إضافة مستخدم جديد</div>
+        <div class="form-group">
+          <label data-ar="الاسم الكامل" data-en="Full Name">الاسم الكامل</label>
+          <input type="text" id="u-name" data-ar-ph="د. محمد العمري" data-en-ph="Dr. John Smith" placeholder="د. محمد العمري">
+        </div>
+        <div class="form-group">
+          <label data-ar="اسم الدخول" data-en="Username">اسم الدخول</label>
+          <input type="text" id="u-username" data-ar-ph="doctor2" data-en-ph="doctor2" placeholder="doctor2">
+        </div>
+        <div class="form-group">
+          <label data-ar="كلمة المرور" data-en="Password">كلمة المرور</label>
+          <input type="text" id="u-password" data-ar-ph="اختر كلمة مرور" data-en-ph="Choose a password" placeholder="اختر كلمة مرور">
+        </div>
+        <div class="form-group">
+          <label data-ar="رقم الهوية الوطنية" data-en="National ID">رقم الهوية الوطنية</label>
+          <input type="text" id="u-national-id" data-ar-ph="10 أرقام" data-en-ph="10 digits" placeholder="10 أرقام">
+        </div>
+        <div class="form-group">
+          <label data-ar="الدور" data-en="Role">الدور</label>
+          <select id="u-role">
+            <option value=""         data-ar="— اختر الدور —"   data-en="— Select Role —">— اختر الدور —</option>
+            <option value="doctor"    data-ar="دكتور مسؤول"      data-en="Physician">دكتور مسؤول</option>
+            <option value="radiology" data-ar="دكتور أشعة"       data-en="Radiologist">دكتور أشعة</option>
+            <option value="admin"     data-ar="أدمن"             data-en="Admin">أدمن</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="addUser()" data-ar="➕ إضافة المستخدم" data-en="➕ Add User">➕ إضافة المستخدم</button>
+      </div>
+
+      <!-- Users List -->
+      <div class="card">
+        <div class="card-title" data-ar="👥 المستخدمون الحاليون" data-en="👥 Current Users">👥 المستخدمون الحاليون</div>
+        <div id="users-list"><div class="empty-state"><div class="icon">⏳</div><p>...</p></div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== Patients Tab ===== -->
+  <div id="tab-patients" class="tab-section">
+    <div class="grid-2">
+
+      <!-- Add Patient -->
+      <div class="card">
+        <div class="card-title" data-ar="➕ إضافة مريض جديد" data-en="➕ Add New Patient">➕ إضافة مريض جديد</div>
+        <div class="form-group">
+          <label data-ar="رقم الملف الطبي" data-en="Medical File No.">رقم الملف الطبي</label>
+          <input type="text" id="p-file" data-ar-ph="P004" data-en-ph="P004" placeholder="P004">
+        </div>
+        <div class="form-group">
+          <label data-ar="اسم المريض" data-en="Patient Name">اسم المريض</label>
+          <input type="text" id="p-name" data-ar-ph="اسم المريض كاملاً" data-en-ph="Full patient name" placeholder="اسم المريض كاملاً">
+        </div>
+        <div class="form-group">
+          <label data-ar="الأطباء المسؤولون" data-en="Assigned Physicians">الأطباء المسؤولون <span style="color:#dc3545">*</span></label>
+          <div class="doctors-check-box" id="doctors-checkboxes">
+            <p style="color:#adb5bd;font-size:0.85rem;" data-ar="جارٍ التحميل..." data-en="Loading...">جارٍ التحميل...</p>
+          </div>
+          <p style="font-size:0.77rem;color:#6c757d;margin-top:4px" data-ar="يمكن اختيار أكثر من دكتور" data-en="Multiple selection allowed">يمكن اختيار أكثر من دكتور</p>
+        </div>
+        <button class="btn btn-primary" onclick="addPatient()" data-ar="➕ إضافة المريض" data-en="➕ Add Patient">➕ إضافة المريض</button>
+      </div>
+
+      <!-- Patients List -->
+      <div class="card">
+        <div class="card-title" data-ar="🗂️ المرضى المسجّلون" data-en="🗂️ Registered Patients">🗂️ المرضى المسجّلون</div>
+        <div id="patients-list"><div class="empty-state"><div class="icon">⏳</div><p>...</p></div></div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ======================================================
+  // نظام الترجمة
+  // ======================================================
+  const T = {
+    ar: {
+      langBtn:        '🌐 English',
+      rolePills:      { admin:'أدمن', radiology:'دكتور أشعة', doctor:'دكتور مسؤول' },
+      colName:'الاسم', colUsername:'اسم الدخول', colRole:'الدور', colDelete:'حذف',
+      colFile:'رقم الملف', colPatient:'اسم المريض', colDoctors:'الأطباء المسؤولون',
+      protected:'محمي',
+      btnDelete:'🗑️ حذف',
+      emptyUsers:'لا يوجد مستخدمون',
+      emptyPatients:'لا يوجد مرضى',
+      fillAll:'يرجى تعبئة جميع الحقول',
+      selectDoc:'اختر دكتوراً مسؤولاً على الأقل',
+      noDoctors:'لا يوجد أطباء مسؤولون — أضف دكتوراً أولاً',
+      confirmDelUser:'هل تريد حذف المستخدم',
+      confirmDelPt:'هل تريد حذف المريض',
+    },
+    en: {
+      langBtn:        '🌐 عربي',
+      rolePills:      { admin:'Admin', radiology:'Radiologist', doctor:'Physician' },
+      colName:'Name', colUsername:'Username', colRole:'Role', colDelete:'Delete',
+      colFile:'File No.', colPatient:'Patient Name', colDoctors:'Assigned Physicians',
+      protected:'Protected',
+      btnDelete:'🗑️ Delete',
+      emptyUsers:'No users found',
+      emptyPatients:'No patients found',
+      fillAll:'Please fill all fields',
+      selectDoc:'Select at least one physician',
+      noDoctors:'No physicians found — add a doctor first',
+      confirmDelUser:'Delete user',
+      confirmDelPt:'Delete patient',
+    }
+  };
+
+  let lang = localStorage.getItem('lang') || 'ar';
+
+  function t(key) { return T[lang][key] || key; }
+
+  function applyLang() {
+    const isAr = lang === 'ar';
+    document.documentElement.lang = lang;
+    document.documentElement.dir  = isAr ? 'rtl' : 'ltr';
+
+    // النصوص
+    document.querySelectorAll(`[data-${lang}]`).forEach(el => {
+      if (el.tagName === 'OPTION') el.textContent = el.getAttribute(`data-${lang}`);
+      else el.textContent = el.getAttribute(`data-${lang}`);
+    });
+
+    // Placeholders
+    document.querySelectorAll('[data-ar-ph]').forEach(el => {
+      el.placeholder = el.getAttribute(`data-${lang}-ph`);
+    });
+
+    document.getElementById('lang-btn').textContent = t('langBtn');
+  }
+
+  function toggleLang() {
+    lang = lang === 'ar' ? 'en' : 'ar';
+    localStorage.setItem('lang', lang);
+    applyLang();
+    // إعادة رسم القوائم
+    loadUsers();
+    if (document.getElementById('tab-patients').classList.contains('active')) {
+      loadPatients();
+      loadDoctorsCheckboxes();
+    }
+  }
+
+  // ======================================================
+  // التحقق من صلاحية الأدمن
+  // ======================================================
+  const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
+  if (!user || user.role !== 'admin') { window.location.href = '/'; }
+
+  // ======================================================
+  // تحميل عند البدء
+  // ======================================================
+  window.addEventListener('load', () => {
+    applyLang();
+    loadStats();
+    loadUsers();
+  });
+
+  // ======================================================
+  // Tabs
+  // ======================================================
+  function switchTab(name, btn) {
+    document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+    if (name === 'users')    loadUsers();
+    if (name === 'patients') { loadPatients(); loadDoctorsCheckboxes(); }
+  }
+
+  // ======================================================
+  // الإحصائيات
+  // ======================================================
+  async function loadStats() {
+    try {
+      const [uRes, pRes, iRes] = await Promise.all([fetch('/admin/users'), fetch('/patients'), fetch('/images')]);
+      document.getElementById('stat-users').textContent    = (await uRes.json()).length;
+      document.getElementById('stat-patients').textContent = (await pRes.json()).length;
+      document.getElementById('stat-images').textContent   = (await iRes.json()).length;
+    } catch(e) {}
+  }
+
+  // ======================================================
+  // المستخدمون
+  // ======================================================
+  async function loadUsers() {
+    const res   = await fetch('/admin/users');
+    const users = await res.json();
+    const cont  = document.getElementById('users-list');
+
+    if (!users.length) {
+      cont.innerHTML = `<div class="empty-state"><div class="icon">👤</div><p>${t('emptyUsers')}</p></div>`;
+      return;
+    }
+
+    const roleClass = { admin:'role-admin', radiology:'role-radiology', doctor:'role-doctor' };
+
+    cont.innerHTML = `<table><thead><tr>
+      <th>${t('colName')}</th>
+      <th>${t('colUsername')}</th>
+      <th>${t('colRole')}</th>
+      <th>${t('colDelete')}</th>
+    </tr></thead><tbody>
+      ${users.map(u => `<tr>
+        <td>${u.name}</td>
+        <td style="font-family:monospace">${u.username}</td>
+        <td><span class="role-pill ${roleClass[u.role]}">${t('rolePills')[u.role]}</span></td>
+        <td>${u.role !== 'admin'
+          ? `<button class="btn-danger" onclick="deleteUser(${u.id},'${u.name}')">${t('btnDelete')}</button>`
+          : `<span style="color:#adb5bd;font-size:0.8rem">${t('protected')}</span>`}
+        </td>
+      </tr>`).join('')}
+    </tbody></table>`;
+  }
+
+  async function addUser() {
+    const name        = document.getElementById('u-name').value.trim();
+    const username    = document.getElementById('u-username').value.trim();
+    const password    = document.getElementById('u-password').value.trim();
+    const national_id = document.getElementById('u-national-id').value.trim();
+    const role        = document.getElementById('u-role').value;
+
+    if (!name||!username||!password||!national_id||!role) { showToast(t('fillAll'),'error'); return; }
+
+    const res  = await fetch('/admin/users', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ name, username, password, national_id, role })
+    });
+    const data = await res.json();
+    if (!res.ok) { showToast(data.detail,'error'); return; }
+
+    showToast(data.message,'success');
+    ['u-name','u-username','u-password','u-national-id'].forEach(id => document.getElementById(id).value='');
+    document.getElementById('u-role').value = '';
+    loadUsers(); loadStats();
+  }
+
+  async function deleteUser(id, name) {
+    if (!confirm(`${t('confirmDelUser')} "${name}"?`)) return;
+    const res  = await fetch(`/admin/users/${id}`, { method:'DELETE' });
+    const data = await res.json();
+    if (!res.ok) { showToast(data.detail,'error'); return; }
+    showToast(data.message,'success');
+    loadUsers(); loadStats();
+  }
+
+  // ======================================================
+  // المرضى
+  // ======================================================
+  async function loadPatients() {
+    const res      = await fetch('/patients');
+    const patients = await res.json();
+    const cont     = document.getElementById('patients-list');
+
+    if (!patients.length) {
+      cont.innerHTML = `<div class="empty-state"><div class="icon">🗂️</div><p>${t('emptyPatients')}</p></div>`;
+      return;
+    }
+
+    cont.innerHTML = `<table><thead><tr>
+      <th>${t('colFile')}</th>
+      <th>${t('colPatient')}</th>
+      <th>${t('colDoctors')}</th>
+      <th>${t('colDelete')}</th>
+    </tr></thead><tbody>
+      ${patients.map(p => `<tr>
+        <td><span class="file-number">${p.file_number}</span></td>
+        <td>${p.name}</td>
+        <td style="font-size:0.82rem;color:#495057">${p.doctors.map(d=>d.name).join('، ')||'—'}</td>
+        <td><button class="btn-danger" onclick="deletePatient(${p.id},'${p.name}')">${t('btnDelete')}</button></td>
+      </tr>`).join('')}
+    </tbody></table>`;
+  }
+
+  async function loadDoctorsCheckboxes() {
+    const res     = await fetch('/admin/doctors');
+    const doctors = await res.json();
+    const cont    = document.getElementById('doctors-checkboxes');
+    if (!doctors.length) {
+      cont.innerHTML = `<p style="color:#dc3545;font-size:0.85rem">${t('noDoctors')}</p>`;
+      return;
+    }
+    cont.innerHTML = doctors.map(d => `
+      <label class="check-label">
+        <input type="checkbox" value="${d.id}"> ${d.name}
+      </label>`).join('');
+  }
+
+  async function addPatient() {
+    const file_number = document.getElementById('p-file').value.trim();
+    const name        = document.getElementById('p-name').value.trim();
+    const checked     = document.querySelectorAll('#doctors-checkboxes input:checked');
+    const doctor_ids  = Array.from(checked).map(cb => parseInt(cb.value));
+
+    if (!file_number||!name) { showToast(t('fillAll'),'error'); return; }
+    if (!doctor_ids.length)  { showToast(t('selectDoc'),'error'); return; }
+
+    const res  = await fetch('/admin/patients', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ file_number, name, doctor_ids })
+    });
+    const data = await res.json();
+    if (!res.ok) { showToast(data.detail,'error'); return; }
+
+    showToast(data.message,'success');
+    document.getElementById('p-file').value = '';
+    document.getElementById('p-name').value = '';
+    document.querySelectorAll('#doctors-checkboxes input').forEach(cb => cb.checked=false);
+    loadPatients(); loadStats();
+  }
+
+  async function deletePatient(id, name) {
+    if (!confirm(`${t('confirmDelPt')} "${name}"?`)) return;
+    const res  = await fetch(`/admin/patients/${id}`, { method:'DELETE' });
+    const data = await res.json();
+    if (!res.ok) { showToast(data.detail,'error'); return; }
+    showToast(data.message,'success');
+    loadPatients(); loadStats();
+  }
+
+  // ======================================================
+  // الخروج
+  // ======================================================
+  function logout() {
+    localStorage.removeItem('currentUser');
+    window.location.href = '/';
+  }
+
+  // ======================================================
+  // Toast
+  // ======================================================
+  function showToast(msg, type='success') {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className   = `toast show ${type}`;
+    setTimeout(() => el.classList.remove('show'), 3000);
+  }
+</script>
+</body>
+</html>

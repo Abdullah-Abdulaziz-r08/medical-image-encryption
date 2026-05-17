@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نظام تشفير الصور الطبية</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI',Tahoma,sans-serif; background:#f0f4f8; color:#1a2a3a; min-height:100vh; }
+
+  /* ===== Login ===== */
+  #login-page { min-height:100vh; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#1a3a5c 0%,#0d6efd 100%); }
+  .login-box  { background:white; border-radius:16px; padding:40px 36px; width:420px; box-shadow:0 20px 60px rgba(0,0,0,0.3); text-align:center; }
+  .login-logo  { font-size:44px; margin-bottom:10px; }
+  .login-title { font-size:1.3rem; font-weight:700; color:#1a3a5c; margin-bottom:4px; }
+  .login-sub   { font-size:0.82rem; color:#6c757d; margin-bottom:28px; }
+  .forgot-link { display:block; margin-top:12px; font-size:0.83rem; color:#0d6efd; cursor:pointer; text-decoration:underline; }
+  .demo-box    { margin-top:20px; padding-top:16px; border-top:1px solid #eee; font-size:0.78rem; color:#6c757d; line-height:1.9; }
+
+  /* زر اللغة */
+  .lang-btn {
+    position:absolute; top:18px;
+    background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.5);
+    color:white; padding:6px 16px; border-radius:20px;
+    font-size:0.85rem; font-weight:600; cursor:pointer;
+    font-family:inherit; transition:all 0.2s; letter-spacing:0.3px;
+  }
+  .lang-btn:hover { background:rgba(255,255,255,0.35); }
+  /* RTL: يمين الصفحة = اليسار بالـ CSS */
+  html[dir="rtl"]  .lang-btn { left:24px; }
+  html[dir="ltr"]  .lang-btn { right:24px; }
+
+  /* ===== App ===== */
+  #app-page { display:none; min-height:100vh; }
+  .header { background:#1a3a5c; color:white; padding:0 28px; height:64px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 8px rgba(0,0,0,0.2); position:sticky; top:0; z-index:100; }
+  .header-left  { display:flex; align-items:center; gap:10px; }
+  .header-logo  { font-size:22px; }
+  .header-title { font-size:1rem; font-weight:700; }
+  .header-sub   { font-size:0.72rem; opacity:0.7; }
+  .header-right { display:flex; align-items:center; gap:10px; }
+  .user-badge { background:rgba(255,255,255,0.15); padding:5px 12px; border-radius:20px; font-size:0.82rem; }
+  .role-badge { padding:4px 11px; border-radius:12px; font-size:0.76rem; font-weight:600; }
+  .role-radiology { background:#0dcaf0; color:#055160; }
+  .role-doctor    { background:#198754; color:white; }
+  .btn-logout { background:rgba(255,255,255,0.15); color:white; border:1px solid rgba(255,255,255,0.3); padding:6px 14px; border-radius:6px; font-size:0.82rem; cursor:pointer; font-family:inherit; transition:background 0.2s; }
+  .btn-logout:hover { background:rgba(255,255,255,0.25); }
+  .header-lang-btn { background:rgba(255,255,255,0.15); color:white; border:1px solid rgba(255,255,255,0.3); padding:6px 14px; border-radius:6px; font-size:0.82rem; font-weight:600; cursor:pointer; font-family:inherit; transition:background 0.2s; }
+  .header-lang-btn:hover { background:rgba(255,255,255,0.25); }
+
+  /* ===== Content ===== */
+  .content { max-width:1100px; margin:0 auto; padding:28px 20px; }
+  .section-title { font-size:1.1rem; font-weight:700; color:#1a3a5c; margin-bottom:18px; padding-bottom:10px; border-bottom:2px solid #dee2e6; display:flex; align-items:center; gap:8px; }
+  .card { background:white; border-radius:12px; padding:24px; box-shadow:0 2px 12px rgba(0,0,0,0.07); margin-bottom:20px; }
+
+  /* ===== Form ===== */
+  .form-group { margin-bottom:14px; text-align:right; }
+  html[dir="ltr"] .form-group { text-align:left; }
+  .form-group label { display:block; font-size:0.82rem; font-weight:600; color:#495057; margin-bottom:5px; }
+  .form-group input,.form-group select,.form-group textarea { width:100%; padding:10px 13px; border:1.5px solid #dee2e6; border-radius:8px; font-size:0.9rem; font-family:inherit; transition:border-color 0.2s; background:#fff; }
+  .form-group input:focus,.form-group select:focus,.form-group textarea:focus { outline:none; border-color:#0d6efd; }
+
+  /* ===== Buttons ===== */
+  .btn { padding:10px 22px; border:none; border-radius:8px; font-size:0.92rem; font-weight:600; font-family:inherit; cursor:pointer; transition:all 0.2s; }
+  .btn-primary { background:#0d6efd; color:white; width:100%; }
+  .btn-primary:hover { background:#0b5ed7; }
+  .btn-success { background:#198754; color:white; }
+  .btn-success:hover { background:#157347; }
+  .btn-outline { background:transparent; border:1.5px solid #0d6efd; color:#0d6efd; }
+  .btn-outline:hover { background:#0d6efd; color:white; }
+  .btn-warning { background:#ffc107; color:#000; border:none; padding:7px 16px; border-radius:6px; font-size:0.83rem; font-weight:600; cursor:pointer; font-family:inherit; }
+  .btn-warning:hover { background:#e0a800; }
+
+  /* ===== Upload ===== */
+  .upload-zone { border:2px dashed #adb5bd; border-radius:10px; padding:24px; text-align:center; cursor:pointer; transition:all 0.2s; margin-bottom:14px; }
+  .upload-zone:hover { border-color:#0d6efd; background:#f8f9ff; }
+  .upload-zone.has-file { border-color:#198754; background:#f0fff4; }
+  .upload-zone input { display:none; }
+  .upload-icon { font-size:36px; margin-bottom:8px; }
+  .upload-zone p { color:#6c757d; font-size:0.88rem; }
+  .previews-container { display:none; max-height:220px; overflow-y:auto; border:1px solid #dee2e6; border-radius:8px; padding:10px; margin-top:10px; background:#fafafa; gap:10px; flex-wrap:wrap; }
+  .previews-container.show { display:flex; }
+  .preview-thumb-wrap { position:relative; width:90px; height:90px; }
+  .preview-thumb { width:90px; height:90px; object-fit:cover; border-radius:6px; border:2px solid #dee2e6; }
+  .preview-thumb-name { position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.55); color:white; font-size:0.6rem; padding:2px 4px; border-radius:0 0 6px 6px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+
+  /* ===== Table ===== */
+  table { width:100%; border-collapse:collapse; font-size:0.88rem; }
+  th { background:#f8f9fa; padding:11px 14px; text-align:right; font-weight:600; color:#495057; border-bottom:2px solid #dee2e6; }
+  html[dir="ltr"] th { text-align:left; }
+  td { padding:12px 14px; border-bottom:1px solid #f0f0f0; vertical-align:middle; }
+  tr:hover td { background:#fafafa; }
+  .file-number { font-weight:700; color:#0d6efd; font-family:monospace; }
+  .btn-view { background:#0d6efd; color:white; border:none; padding:6px 16px; border-radius:6px; font-size:0.82rem; font-weight:600; cursor:pointer; font-family:inherit; transition:background 0.2s; }
+  .btn-view:hover { background:#0b5ed7; }
+
+  /* ===== Modal ===== */
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:1000; align-items:center; justify-content:center; }
+  .modal-overlay.show { display:flex; }
+  .modal { background:white; border-radius:16px; width:92%; max-width:780px; max-height:92vh; overflow-y:auto; box-shadow:0 24px 80px rgba(0,0,0,0.4); }
+  .modal-header { background:#1a3a5c; color:white; padding:16px 22px; border-radius:16px 16px 0 0; display:flex; justify-content:space-between; align-items:center; }
+  .modal-header h3 { font-size:0.97rem; }
+  .btn-close { background:rgba(255,255,255,0.2); border:none; color:white; width:30px; height:30px; border-radius:50%; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .btn-close:hover { background:rgba(255,255,255,0.35); }
+  .modal-body { padding:22px; }
+  .patient-info { background:#f8f9fa; border-radius:10px; padding:14px 18px; margin-bottom:18px; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .info-item label { font-size:0.75rem; color:#6c757d; font-weight:600; display:block; margin-bottom:2px; }
+  .info-item span  { font-size:0.9rem; font-weight:600; color:#1a2a3a; }
+  .modal-img { width:100%; border-radius:10px; border:1px solid #dee2e6; }
+  .modal-actions { display:flex; gap:10px; margin-top:14px; justify-content:flex-end; flex-wrap:wrap; }
+  .img-status-bar { display:flex; align-items:center; gap:8px; padding:8px 14px; border-radius:8px; margin-bottom:12px; font-size:0.85rem; font-weight:600; }
+  .img-status-bar.encrypted { background:#fff3cd; color:#856404; border:1px solid #ffd54f; }
+  .img-status-bar.decrypted { background:#d1e7dd; color:#0a3622; border:1px solid #a3cfbb; }
+
+  /* ===== Misc ===== */
+  .error-msg { background:#fff3f3; border:1px solid #f5c2c7; color:#842029; padding:10px 14px; border-radius:8px; font-size:0.83rem; margin-top:10px; display:none; }
+  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); padding:12px 24px; border-radius:10px; font-size:0.88rem; font-weight:600; z-index:9999; opacity:0; transition:opacity 0.3s; pointer-events:none; }
+  .toast.show { opacity:1; }
+  .toast.success { background:#198754; color:white; }
+  .toast.error   { background:#dc3545; color:white; }
+  .loading { display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,0.4); border-top-color:white; border-radius:50%; animation:spin 0.7s linear infinite; margin-right:6px; vertical-align:middle; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .empty-state { text-align:center; padding:40px; color:#adb5bd; }
+  .empty-state .icon { font-size:40px; margin-bottom:10px; }
+  .security-note { background:#fff8e1; border:1px solid #ffd54f; border-radius:8px; padding:9px 14px; font-size:0.8rem; color:#7a5800; margin-bottom:18px; }
+</style>
+</head>
+<body>
+
+<!-- ===== صفحة تسجيل الدخول ===== -->
+<div id="login-page" style="position:relative">
+
+  <!-- زر اللغة -->
+  <button class="lang-btn" onclick="toggleLang()" id="lang-btn">🌐 English</button>
+
+  <div class="login-box">
+    <div class="login-logo">🏥</div>
+    <div class="login-title"  data-ar="نظام تشفير الصور الطبية"   data-en="Medical Image Encryption System">نظام تشفير الصور الطبية</div>
+    <div class="login-sub"    data-ar="يرجى تسجيل الدخول للمتابعة" data-en="Please sign in to continue">يرجى تسجيل الدخول للمتابعة</div>
+
+    <div class="form-group">
+      <label data-ar="اسم المستخدم" data-en="Username">اسم المستخدم</label>
+      <input type="text" id="username" data-ar-placeholder="أدخل اسم المستخدم" data-en-placeholder="Enter username" placeholder="أدخل اسم المستخدم">
+    </div>
+    <div class="form-group">
+      <label data-ar="كلمة المرور" data-en="Password">كلمة المرور</label>
+      <input type="password" id="password" data-ar-placeholder="أدخل كلمة المرور" data-en-placeholder="Enter password" placeholder="أدخل كلمة المرور">
+    </div>
+
+    <button class="btn btn-primary" onclick="login()" data-ar="تسجيل الدخول" data-en="Sign In">تسجيل الدخول</button>
+    <span class="forgot-link" onclick="openReset()" data-ar="🔑 نسيت كلمة المرور؟" data-en="🔑 Forgot password?">🔑 نسيت كلمة المرور؟</span>
+    <div class="error-msg" id="login-error"></div>
+
+    <div class="demo-box">
+      <strong data-ar="حسابات تجريبية:" data-en="Demo accounts:">حسابات تجريبية:</strong><br>
+      <span data-ar="أدمن" data-en="Admin">أدمن</span>: <code>admin</code> / <code>admin123</code><br>
+      <span data-ar="دكتور أشعة" data-en="Radiologist">دكتور أشعة</span>: <code>radiology1</code> / <code>1234</code><br>
+      <span data-ar="دكتور مسؤول" data-en="Physician">دكتور مسؤول</span>: <code>doctor1</code> / <code>1234</code>
+    </div>
+  </div>
+</div>
+
+<!-- ===== التطبيق ===== -->
+<div id="app-page">
+  <div class="header">
+    <div class="header-left">
+      <div class="header-logo">🔐</div>
+      <div>
+        <div class="header-title" data-ar="نظام تشفير الصور الطبية" data-en="Medical Image Encryption">نظام تشفير الصور الطبية</div>
+        <div class="header-sub"   data-ar="Medical Image Encryption System" data-en="Secure Medical Imaging">Medical Image Encryption System</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="user-badge" id="user-name-badge">—</span>
+      <span class="role-badge"  id="role-badge">—</span>
+      <button class="header-lang-btn" onclick="toggleLang()" id="header-lang-btn">🌐 English</button>
+      <button class="btn-logout" onclick="logout()" data-ar="تسجيل الخروج" data-en="Sign Out">تسجيل الخروج</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- قسم دكتور الأشعة -->
+    <div id="section-radiology" style="display:none">
+      <div class="security-note" data-ar="🔒 جميع الصور تُشفَّر تلقائياً قبل التخزين" data-en="🔒 All images are automatically encrypted before storage">🔒 جميع الصور تُشفَّر تلقائياً قبل التخزين</div>
+      <div class="card">
+        <div class="section-title" data-ar="📤 رفع صور طبية" data-en="📤 Upload Medical Images">📤 رفع صور طبية</div>
+        <div class="form-group">
+          <label data-ar="اختر المريض" data-en="Select Patient">اختر المريض</label>
+          <select id="patient-select"><option value="" data-ar="— اختر المريض —" data-en="— Select Patient —">— اختر المريض —</option></select>
+        </div>
+        <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
+          <input type="file" id="file-input" accept="image/*" multiple onchange="handleFileSelect()">
+          <div class="upload-icon">🩻</div>
+          <p data-ar="اضغط لاختيار صورة أو أكثر" data-en="Click to select one or more images">اضغط لاختيار صورة أو أكثر</p>
+          <p style="font-size:0.78rem;margin-top:4px" data-ar="JPG, PNG — يمكن اختيار أكثر من صورة" data-en="JPG, PNG — multiple selection supported">JPG, PNG — يمكن اختيار أكثر من صورة</p>
+        </div>
+        <div class="previews-container" id="previews-container"></div>
+        <p id="files-count" style="font-size:0.83rem;color:#198754;font-weight:600;margin-bottom:12px;"></p>
+        <div class="form-group">
+          <label data-ar="ملاحظات (اختياري)" data-en="Notes (optional)">ملاحظات (اختياري)</label>
+          <textarea id="notes" rows="2" data-ar-placeholder="نوع الصورة، ملاحظات..." data-en-placeholder="Image type, notes..." placeholder="نوع الصورة، ملاحظات..."></textarea>
+        </div>
+        <button class="btn btn-success" id="upload-btn" onclick="uploadImage()" style="width:100%" data-ar="🔒 تشفير ورفع الصور" data-en="🔒 Encrypt & Upload">🔒 تشفير ورفع الصور</button>
+      </div>
+
+      <div class="card">
+        <div class="section-title" data-ar="📋 سجل الصور المرفوعة" data-en="📋 Uploaded Images Log">📋 سجل الصور المرفوعة</div>
+        <div id="radiology-images-list"><div class="empty-state"><div class="icon">📂</div><p data-ar="لا توجد صور بعد" data-en="No images yet">لا توجد صور بعد</p></div></div>
+      </div>
+    </div>
+
+    <!-- قسم الدكتور -->
+    <div id="section-doctor" style="display:none">
+      <div class="security-note" data-ar="🔓 الصور مخزّنة مشفّرة — اضغط عرض لرؤية الصورة المشفّرة ثم فك التشفير" data-en="🔓 Images are stored encrypted — click View to see encrypted image, then decrypt">🔓 الصور مخزّنة مشفّرة — اضغط عرض لرؤية الصورة المشفّرة ثم فك التشفير</div>
+      <div class="card">
+        <div class="section-title" data-ar="🩻 صور مرضاي" data-en="🩻 My Patients' Images">🩻 صور مرضاي</div>
+        <div id="doctor-images-list"><div class="empty-state"><div class="icon">📂</div><p data-ar="لا توجد صور بعد" data-en="No images yet">لا توجد صور بعد</p></div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== Modal نسيت كلمة المرور ===== -->
+<div class="modal-overlay" id="reset-modal">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <h3 data-ar="🔑 استعادة كلمة المرور" data-en="🔑 Password Recovery">🔑 استعادة كلمة المرور</h3>
+      <button class="btn-close" onclick="closeReset()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label data-ar="اسم المستخدم" data-en="Username">اسم المستخدم</label>
+        <input type="text" id="reset-username" data-ar-placeholder="أدخل اسم المستخدم" data-en-placeholder="Enter username" placeholder="أدخل اسم المستخدم">
+      </div>
+      <div class="form-group">
+        <label data-ar="رقم الهوية الوطنية" data-en="National ID">رقم الهوية الوطنية</label>
+        <input type="text" id="reset-national-id" data-ar-placeholder="أدخل رقم هويتك للتحقق" data-en-placeholder="Enter your national ID" placeholder="أدخل رقم هويتك للتحقق">
+      </div>
+      <div class="form-group">
+        <label data-ar="كلمة المرور الجديدة" data-en="New Password">كلمة المرور الجديدة</label>
+        <input type="password" id="reset-new-pwd" data-ar-placeholder="كلمة مرور جديدة" data-en-placeholder="New password" placeholder="كلمة مرور جديدة">
+      </div>
+      <div class="form-group">
+        <label data-ar="تأكيد كلمة المرور" data-en="Confirm Password">تأكيد كلمة المرور</label>
+        <input type="password" id="reset-new-pwd2" data-ar-placeholder="أعد كتابة كلمة المرور" data-en-placeholder="Re-enter password" placeholder="أعد كتابة كلمة المرور">
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-outline" onclick="closeReset()" data-ar="إلغاء" data-en="Cancel">إلغاء</button>
+        <button class="btn btn-primary" style="width:auto" onclick="submitReset()" data-ar="✅ تغيير كلمة المرور" data-en="✅ Reset Password">✅ تغيير كلمة المرور</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Modal عرض الصورة ===== -->
+<div class="modal-overlay" id="image-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-title" data-ar="🩻 عرض الصورة الطبية" data-en="🩻 Medical Image Viewer">🩻 عرض الصورة الطبية</h3>
+      <button class="btn-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="patient-info">
+        <div class="info-item"><label data-ar="رقم الملف"      data-en="File No.">رقم الملف</label><span id="modal-file-number">—</span></div>
+        <div class="info-item"><label data-ar="اسم المريض"    data-en="Patient Name">اسم المريض</label><span id="modal-patient-name">—</span></div>
+        <div class="info-item"><label data-ar="رُفعت بواسطة"  data-en="Uploaded By">رُفعت بواسطة</label><span id="modal-uploaded-by">—</span></div>
+        <div class="info-item"><label data-ar="تاريخ الرفع"   data-en="Upload Date">تاريخ الرفع</label><span id="modal-uploaded-at">—</span></div>
+        <div class="info-item" style="grid-column:span 2"><label data-ar="ملاحظات" data-en="Notes">ملاحظات</label><span id="modal-notes">—</span></div>
+      </div>
+      <div class="img-status-bar encrypted" id="img-status-bar"
+           data-ar-encrypted="🔒 الصورة معروضة بحالتها المشفّرة"
+           data-en-encrypted="🔒 Image shown in encrypted form"
+           data-ar-decrypted="🔓 تم فك التشفير — الصورة الأصلية"
+           data-en-decrypted="🔓 Decrypted — Original Image">
+        🔒 الصورة معروضة بحالتها المشفّرة
+      </div>
+      <img id="modal-img" class="modal-img" src="" alt="">
+      <div class="modal-actions">
+        <button class="btn btn-warning" id="btn-decrypt-img" onclick="decryptCurrentImage()" data-ar="🔓 فك التشفير" data-en="🔓 Decrypt Image">🔓 فك التشفير</button>
+        <button class="btn btn-outline"  id="btn-download"    onclick="downloadImage()" style="display:none" data-ar="⬇️ تحميل الصورة" data-en="⬇️ Download Image">⬇️ تحميل الصورة</button>
+        <button class="btn btn-primary"  style="width:auto"   onclick="closeModal()"   data-ar="إغلاق"          data-en="Close">إغلاق</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ======================================================
+  // نظام الترجمة
+  // ======================================================
+  const T = {
+    ar: {
+      roleRadiology: 'دكتور أشعة',
+      roleDoctor:    'دكتور مسؤول',
+      langBtn:       '🌐 English',
+      errorFill:     'يرجى إدخال اسم المستخدم وكلمة المرور',
+      errorServer:   'تعذّر الاتصال بالخادم',
+      selectPatient: '— اختر المريض —',
+      filesSelected1:'تم اختيار صورة واحدة',
+      filesSelectedN:'تم اختيار {n} صور',
+      errSelectPt:   'اختر المريض أولاً',
+      errSelectImg:  'اختر صورة واحدة على الأقل',
+      uploading:     'جارٍ تشفير ورفع {n} صورة...',
+      uploadBtn:     '🔒 تشفير ورفع الصور',
+      errUpload:     'خطأ في الرفع',
+      errServer:     'تعذّر الاتصال بالخادم',
+      decrypting:    'جارٍ فك التشفير...',
+      decryptBtn:    '🔓 فك التشفير',
+      errLoadImg:    'خطأ في تحميل الصورة',
+      errDecrypt:    'خطأ في فك التشفير',
+      errLoadImg2:   'تعذّر تحميل الصورة',
+      errDecrypt2:   'تعذّر فك التشفير',
+      colFile:       'رقم الملف', colPatient:'اسم المريض', colDate:'تاريخ الرفع',
+      colNotes:'ملاحظات', colStatus:'الحالة', colBy:'رُفعت بواسطة', colView:'عرض',
+      statusEncrypted:'🔒 مشفّرة',
+      btnView:'👁️ عرض',
+      emptyImages:'لا توجد صور بعد',
+      resetFill:'يرجى تعبئة جميع الحقول',
+      resetMismatch:'كلمة المرور الجديدة غير متطابقة',
+      modalTitleEnc:'🔒 الصورة المشفّرة',
+      modalTitleDec:'🔓 الصورة الأصلية',
+    },
+    en: {
+      roleRadiology: 'Radiologist',
+      roleDoctor:    'Physician',
+      langBtn:       '🌐 عربي',
+      errorFill:     'Please enter username and password',
+      errorServer:   'Could not connect to server',
+      selectPatient: '— Select Patient —',
+      filesSelected1:'1 image selected',
+      filesSelectedN:'{n} images selected',
+      errSelectPt:   'Please select a patient first',
+      errSelectImg:  'Please select at least one image',
+      uploading:     'Encrypting & uploading {n} image(s)...',
+      uploadBtn:     '🔒 Encrypt & Upload',
+      errUpload:     'Upload error',
+      errServer:     'Could not connect to server',
+      decrypting:    'Decrypting...',
+      decryptBtn:    '🔓 Decrypt Image',
+      errLoadImg:    'Error loading image',
+      errDecrypt:    'Decryption error',
+      errLoadImg2:   'Could not load image',
+      errDecrypt2:   'Could not decrypt image',
+      colFile:       'File No.', colPatient:'Patient', colDate:'Upload Date',
+      colNotes:'Notes', colStatus:'Status', colBy:'Uploaded By', colView:'View',
+      statusEncrypted:'🔒 Encrypted',
+      btnView:'👁️ View',
+      emptyImages:'No images yet',
+      resetFill:'Please fill all fields',
+      resetMismatch:'Passwords do not match',
+      modalTitleEnc:'🔒 Encrypted Image',
+      modalTitleDec:'🔓 Original Image',
+    }
+  };
+
+  let lang = localStorage.getItem('lang') || 'ar';
+
+  function t(key) { return T[lang][key] || key; }
+
+  function applyLang() {
+    const isAr = lang === 'ar';
+    document.documentElement.lang = lang;
+    document.documentElement.dir  = isAr ? 'rtl' : 'ltr';
+
+    // النصوص العادية
+    document.querySelectorAll(`[data-${lang}]`).forEach(el => {
+      el.textContent = el.getAttribute(`data-${lang}`);
+    });
+
+    // الـ placeholders
+    document.querySelectorAll(`[data-${lang}-placeholder]`).forEach(el => {
+      el.placeholder = el.getAttribute(`data-${lang}-placeholder`);
+    });
+
+    // أزرار اللغة
+    const lbl = isAr ? '🌐 English' : '🌐 عربي';
+    ['lang-btn','header-lang-btn'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = lbl;
+    });
+
+    // تحديث شريط الحالة لو كان المودال مفتوح
+    const bar = document.getElementById('img-status-bar');
+    if (bar) {
+      const stateKey = bar.classList.contains('decrypted') ? 'decrypted' : 'encrypted';
+      bar.textContent = bar.getAttribute(`data-${lang}-${stateKey}`);
+    }
+  }
+
+  function toggleLang() {
+    lang = lang === 'ar' ? 'en' : 'ar';
+    localStorage.setItem('lang', lang);
+    applyLang();
+    // إعادة رسم الجداول لو كانت محملة
+    if (currentUser) {
+      if (currentUser.role === 'radiology') loadRadiologyImages();
+      else                                  loadDoctorImages();
+    }
+  }
+
+  // ======================================================
+  // المتغيرات والجلسة
+  // ======================================================
+  let currentUser      = null;
+  let currentImageData = null;
+  let currentImageId   = null;
+  let isDecrypted      = false;
+
+  window.addEventListener('load', () => {
+    applyLang();
+    const saved = localStorage.getItem('currentUser');
+    if (saved) { currentUser = JSON.parse(saved); showApp(); }
+  });
+
+  // ======================================================
+  // تسجيل الدخول
+  // ======================================================
+  async function login() {
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
+    if (!username || !password) { showError(t('errorFill')); return; }
+
+    const fd = new FormData();
+    fd.append('username', username);
+    fd.append('password', password);
+
+    try {
+      const res  = await fetch('/login', { method:'POST', body:fd });
+      const data = await res.json();
+      if (!res.ok) { showError(data.detail); return; }
+      currentUser = data;
+      localStorage.setItem('currentUser', JSON.stringify(currentUser));
+      showApp();
+    } catch(e) { showError(t('errorServer')); }
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && document.getElementById('login-page').style.display !== 'none') login();
+  });
+
+  // ======================================================
+  // عرض التطبيق
+  // ======================================================
+  async function showApp() {
+    if (currentUser.role === 'admin') { window.location.href = '/admin-panel'; return; }
+
+    document.getElementById('login-page').style.display = 'none';
+    document.getElementById('app-page').style.display   = 'block';
+    document.getElementById('user-name-badge').textContent = currentUser.name;
+
+    const rb = document.getElementById('role-badge');
+    if (currentUser.role === 'radiology') {
+      rb.textContent = t('roleRadiology'); rb.className = 'role-badge role-radiology';
+      document.getElementById('section-radiology').style.display = 'block';
+      document.getElementById('section-doctor').style.display    = 'none';
+      await loadPatients();
+      await loadRadiologyImages();
+    } else {
+      rb.textContent = t('roleDoctor'); rb.className = 'role-badge role-doctor';
+      document.getElementById('section-doctor').style.display    = 'block';
+      document.getElementById('section-radiology').style.display = 'none';
+      await loadDoctorImages();
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem('currentUser');
+    currentUser = null;
+    document.getElementById('app-page').style.display   = 'none';
+    document.getElementById('login-page').style.display = 'flex';
+    document.getElementById('username').value = '';
+    document.getElementById('password').value = '';
+    document.getElementById('login-error').style.display = 'none';
+  }
+
+  // ======================================================
+  // نسيت كلمة المرور
+  // ======================================================
+  function openReset()  { document.getElementById('reset-modal').classList.add('show'); }
+  function closeReset() {
+    document.getElementById('reset-modal').classList.remove('show');
+    ['reset-username','reset-national-id','reset-new-pwd','reset-new-pwd2'].forEach(id => document.getElementById(id).value='');
+  }
+
+  async function submitReset() {
+    const username    = document.getElementById('reset-username').value.trim();
+    const national_id = document.getElementById('reset-national-id').value.trim();
+    const newPwd      = document.getElementById('reset-new-pwd').value;
+    const newPwd2     = document.getElementById('reset-new-pwd2').value;
+
+    if (!username||!national_id||!newPwd||!newPwd2) { showToast(t('resetFill'),'error'); return; }
+    if (newPwd !== newPwd2) { showToast(t('resetMismatch'),'error'); return; }
+
+    const res  = await fetch('/reset-password', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ username, national_id, new_password:newPwd })
+    });
+    const data = await res.json();
+    if (!res.ok) { showToast(data.detail,'error'); return; }
+    showToast(data.message,'success');
+    closeReset();
+  }
+
+  // ======================================================
+  // المرضى
+  // ======================================================
+  async function loadPatients() {
+    const res      = await fetch('/patients');
+    const patients = await res.json();
+    const sel      = document.getElementById('patient-select');
+    sel.innerHTML  = `<option value="">${t('selectPatient')}</option>`;
+    patients.forEach(p => { sel.innerHTML += `<option value="${p.id}">[${p.file_number}] ${p.name}</option>`; });
+  }
+
+  // ======================================================
+  // اختيار الصور
+  // ======================================================
+  function handleFileSelect() {
+    const files   = document.getElementById('file-input').files;
+    const zone    = document.getElementById('upload-zone');
+    const cont    = document.getElementById('previews-container');
+    const countEl = document.getElementById('files-count');
+    if (!files.length) return;
+
+    zone.classList.add('has-file');
+    countEl.textContent = files.length === 1
+      ? t('filesSelected1')
+      : t('filesSelectedN').replace('{n}', files.length);
+
+    cont.innerHTML = '';
+    cont.classList.add('show');
+    Array.from(files).forEach(file => {
+      const wrap   = document.createElement('div');  wrap.className = 'preview-thumb-wrap';
+      const img    = document.createElement('img');   img.className  = 'preview-thumb';
+      const nameEl = document.createElement('div');  nameEl.className = 'preview-thumb-name'; nameEl.textContent = file.name;
+      wrap.appendChild(img); wrap.appendChild(nameEl); cont.appendChild(wrap);
+      const reader = new FileReader();
+      reader.onload = e => { img.src = e.target.result; };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // ======================================================
+  // رفع الصور
+  // ======================================================
+  async function uploadImage() {
+    const patientId = document.getElementById('patient-select').value;
+    const files     = document.getElementById('file-input').files;
+    const notes     = document.getElementById('notes').value;
+    const btn       = document.getElementById('upload-btn');
+
+    if (!patientId)    { showToast(t('errSelectPt'),'error');  return; }
+    if (!files.length) { showToast(t('errSelectImg'),'error'); return; }
+
+    btn.disabled  = true;
+    btn.innerHTML = `<span class="loading"></span> ${t('uploading').replace('{n}',files.length)}`;
+
+    const fd = new FormData();
+    for (const f of files) fd.append('files', f);
+    fd.append('patient_id',  patientId);
+    fd.append('uploaded_by', currentUser.name);
+    fd.append('notes',       notes);
+
+    try {
+      const res  = await fetch('/upload', { method:'POST', body:fd });
+      const data = await res.json();
+      if (!res.ok) { showToast(data.detail||t('errUpload'),'error'); return; }
+      showToast(data.message,'success');
+      document.getElementById('patient-select').value       = '';
+      document.getElementById('file-input').value           = '';
+      document.getElementById('notes').value                = '';
+      document.getElementById('upload-zone').classList.remove('has-file');
+      document.getElementById('previews-container').classList.remove('show');
+      document.getElementById('previews-container').innerHTML = '';
+      document.getElementById('files-count').textContent   = '';
+      await loadRadiologyImages();
+    } catch(e) { showToast(t('errServer'),'error');
+    } finally  { btn.disabled=false; btn.textContent=t('uploadBtn'); }
+  }
+
+  // ======================================================
+  // جدول الأشعة
+  // ======================================================
+  async function loadRadiologyImages() {
+    const res    = await fetch('/images');
+    const images = await res.json();
+    const cont   = document.getElementById('radiology-images-list');
+    if (!images.length) { cont.innerHTML=`<div class="empty-state"><div class="icon">📂</div><p>${t('emptyImages')}</p></div>`; return; }
+    cont.innerHTML = `<table><thead><tr>
+      <th>${t('colFile')}</th><th>${t('colPatient')}</th><th>${t('colDate')}</th><th>${t('colNotes')}</th><th>${t('colStatus')}</th>
+    </tr></thead><tbody>${images.map(img=>`<tr>
+      <td><span class="file-number">${img.file_number}</span></td>
+      <td>${img.patient_name}</td><td>${img.uploaded_at}</td>
+      <td>${img.notes||'—'}</td>
+      <td><span style="color:#198754;font-weight:600">${t('statusEncrypted')}</span></td>
+    </tr>`).join('')}</tbody></table>`;
+  }
+
+  // ======================================================
+  // جدول الدكتور
+  // ======================================================
+  async function loadDoctorImages() {
+    const res    = await fetch(`/images/my/${currentUser.id}`);
+    const images = await res.json();
+    const cont   = document.getElementById('doctor-images-list');
+    if (!images.length) { cont.innerHTML=`<div class="empty-state"><div class="icon">📂</div><p>${t('emptyImages')}</p></div>`; return; }
+    cont.innerHTML = `<table><thead><tr>
+      <th>${t('colFile')}</th><th>${t('colPatient')}</th><th>${t('colBy')}</th><th>${t('colDate')}</th><th>${t('colNotes')}</th><th>${t('colView')}</th>
+    </tr></thead><tbody>${images.map(img=>`<tr>
+      <td><span class="file-number">${img.file_number}</span></td>
+      <td>${img.patient_name}</td><td>${img.uploaded_by}</td><td>${img.uploaded_at}</td>
+      <td>${img.notes||'—'}</td>
+      <td><button class="btn-view" onclick="viewImage(${img.id})">${t('btnView')}</button></td>
+    </tr>`).join('')}</tbody></table>`;
+  }
+
+  // ======================================================
+  // عرض وفك التشفير
+  // ======================================================
+  async function viewImage(id) {
+    currentImageId=id; isDecrypted=false;
+    try {
+      const res  = await fetch(`/view/encrypted/${id}`);
+      const data = await res.json();
+      if (!res.ok) { showToast(t('errLoadImg'),'error'); return; }
+
+      fillModal(data);
+      document.getElementById('modal-img').src = 'data:image/png;base64,'+data.image_data;
+      const bar = document.getElementById('img-status-bar');
+      bar.className   = 'img-status-bar encrypted';
+      bar.textContent = bar.getAttribute(`data-${lang}-encrypted`);
+      document.getElementById('modal-title').textContent       = t('modalTitleEnc');
+      document.getElementById('btn-decrypt-img').style.display = 'inline-flex';
+      document.getElementById('btn-download').style.display    = 'none';
+      currentImageData = null;
+      document.getElementById('image-modal').classList.add('show');
+    } catch(e) { showToast(t('errLoadImg2'),'error'); }
+  }
+
+  async function decryptCurrentImage() {
+    if (!currentImageId) return;
+    const btn = document.getElementById('btn-decrypt-img');
+    btn.disabled  = true;
+    btn.innerHTML = `<span class="loading"></span> ${t('decrypting')}`;
+
+    try {
+      const res  = await fetch(`/view/decrypted/${currentImageId}`);
+      const data = await res.json();
+      if (!res.ok) { showToast(t('errDecrypt'),'error'); return; }
+
+      document.getElementById('modal-img').src = 'data:image/png;base64,'+data.image_data;
+      const bar = document.getElementById('img-status-bar');
+      bar.className   = 'img-status-bar decrypted';
+      bar.textContent = bar.getAttribute(`data-${lang}-decrypted`);
+      document.getElementById('modal-title').textContent       = t('modalTitleDec');
+      document.getElementById('btn-decrypt-img').style.display = 'none';
+      document.getElementById('btn-download').style.display    = 'inline-flex';
+      currentImageData = data.image_data;
+      isDecrypted = true;
+    } catch(e) { showToast(t('errDecrypt2'),'error');
+    } finally  { btn.disabled=false; btn.innerHTML=t('decryptBtn'); }
+  }
+
+  function fillModal(data) {
+    document.getElementById('modal-file-number').textContent  = data.file_number;
+    document.getElementById('modal-patient-name').textContent = data.patient_name;
+    document.getElementById('modal-uploaded-by').textContent  = data.uploaded_by;
+    document.getElementById('modal-uploaded-at').textContent  = data.uploaded_at;
+    document.getElementById('modal-notes').textContent        = data.notes||'—';
+  }
+
+  function closeModal() {
+    document.getElementById('image-modal').classList.remove('show');
+    currentImageData=null; currentImageId=null; isDecrypted=false;
+  }
+
+  function downloadImage() {
+    if (!currentImageData) return;
+    const a = document.createElement('a');
+    a.href     = 'data:image/png;base64,'+currentImageData;
+    a.download = `${document.getElementById('modal-file-number').textContent}_${document.getElementById('modal-patient-name').textContent}.png`;
+    a.click();
+  }
+
+  // ======================================================
+  // Helpers
+  // ======================================================
+  function showError(msg) {
+    const el=document.getElementById('login-error');
+    el.textContent=msg; el.style.display='block';
+  }
+  function showToast(msg, type='success') {
+    const t=document.getElementById('toast');
+    t.textContent=msg; t.className=`toast show ${type}`;
+    setTimeout(()=>t.classList.remove('show'),3000);
+  }
+
+  document.getElementById('image-modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+  document.getElementById('reset-modal').addEventListener('click', function(e){if(e.target===this)closeReset();});
+</script>
+</body>
+</html>
