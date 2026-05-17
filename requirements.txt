@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+pillow
+numpy
+sqlalchemy
+python-multipart
+azure-keyvault-secrets
+azure-identity
