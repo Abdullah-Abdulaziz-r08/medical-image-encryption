@@ -4,124 +4,134 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>نظام تشفير الصور الطبية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'Segoe UI',Tahoma,sans-serif; background:#f0f4f8; color:#1a2a3a; min-height:100vh; }
+  body { font-family:'Inter','Segoe UI',Tahoma,sans-serif; background:#f1f5f9; color:#0f172a; min-height:100vh; }
 
   /* ===== Login ===== */
-  #login-page { min-height:100vh; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#1a3a5c 0%,#0d6efd 100%); }
-  .login-box  { background:white; border-radius:16px; padding:40px 36px; width:420px; box-shadow:0 20px 60px rgba(0,0,0,0.3); text-align:center; }
-  .login-logo  { font-size:44px; margin-bottom:10px; }
-  .login-title { font-size:1.3rem; font-weight:700; color:#1a3a5c; margin-bottom:4px; }
-  .login-sub   { font-size:0.82rem; color:#6c757d; margin-bottom:28px; }
-  .forgot-link { display:block; margin-top:12px; font-size:0.83rem; color:#0d6efd; cursor:pointer; text-decoration:underline; }
-  .demo-box    { margin-top:20px; padding-top:16px; border-top:1px solid #eee; font-size:0.78rem; color:#6c757d; line-height:1.9; }
+  #login-page { min-height:100vh; display:flex; align-items:center; justify-content:center; background:#0f172a; }
+  .login-box  { background:white; border-radius:8px; padding:44px 40px; width:420px; box-shadow:0 8px 32px rgba(0,0,0,0.4); text-align:center; border-top:3px solid #1e3a5f; }
+  .login-monogram { display:inline-flex; align-items:center; justify-content:center; width:52px; height:52px; background:#1e3a5f; border-radius:8px; margin-bottom:16px; }
+  .login-monogram span { color:white; font-size:1rem; font-weight:800; letter-spacing:0.05em; }
+  .login-title { font-size:1.2rem; font-weight:700; color:#0f172a; margin-bottom:4px; letter-spacing:-0.02em; }
+  .login-sub   { font-size:0.8rem; color:#64748b; margin-bottom:32px; }
+  .forgot-link { display:block; margin-top:12px; font-size:0.82rem; color:#2563eb; cursor:pointer; text-decoration:underline; }
+  .demo-box    { margin-top:20px; margin-left:-40px; margin-right:-40px; margin-bottom:-44px; padding:14px 20px; border-top:1px solid #e2e8f0; background:#f8fafc; border-radius:0 0 5px 5px; font-size:0.77rem; color:#64748b; line-height:2.1; }
+  .demo-box code { background:#e2e8f0; padding:1px 6px; border-radius:3px; font-size:0.76rem; color:#1e3a5f; font-family:'SF Mono','Fira Code',monospace; }
 
   /* زر اللغة */
   .lang-btn {
     position:absolute; top:18px;
-    background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.5);
-    color:white; padding:6px 16px; border-radius:20px;
-    font-size:0.85rem; font-weight:600; cursor:pointer;
-    font-family:inherit; transition:all 0.2s; letter-spacing:0.3px;
+    background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2);
+    color:rgba(255,255,255,0.75); padding:6px 16px; border-radius:6px;
+    font-size:0.82rem; font-weight:600; cursor:pointer;
+    font-family:inherit; transition:all 0.2s; letter-spacing:0.02em;
   }
-  .lang-btn:hover { background:rgba(255,255,255,0.35); }
-  /* RTL: يمين الصفحة = اليسار بالـ CSS */
+  .lang-btn:hover { background:rgba(255,255,255,0.15); color:white; }
   html[dir="rtl"]  .lang-btn { left:24px; }
   html[dir="ltr"]  .lang-btn { right:24px; }
 
   /* ===== App ===== */
   #app-page { display:none; min-height:100vh; }
-  .header { background:#1a3a5c; color:white; padding:0 28px; height:64px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 8px rgba(0,0,0,0.2); position:sticky; top:0; z-index:100; }
-  .header-left  { display:flex; align-items:center; gap:10px; }
-  .header-logo  { font-size:22px; }
-  .header-title { font-size:1rem; font-weight:700; }
-  .header-sub   { font-size:0.72rem; opacity:0.7; }
-  .header-right { display:flex; align-items:center; gap:10px; }
-  .user-badge { background:rgba(255,255,255,0.15); padding:5px 12px; border-radius:20px; font-size:0.82rem; }
-  .role-badge { padding:4px 11px; border-radius:12px; font-size:0.76rem; font-weight:600; }
-  .role-radiology { background:#0dcaf0; color:#055160; }
-  .role-doctor    { background:#198754; color:white; }
-  .btn-logout { background:rgba(255,255,255,0.15); color:white; border:1px solid rgba(255,255,255,0.3); padding:6px 14px; border-radius:6px; font-size:0.82rem; cursor:pointer; font-family:inherit; transition:background 0.2s; }
-  .btn-logout:hover { background:rgba(255,255,255,0.25); }
-  .header-lang-btn { background:rgba(255,255,255,0.15); color:white; border:1px solid rgba(255,255,255,0.3); padding:6px 14px; border-radius:6px; font-size:0.82rem; font-weight:600; cursor:pointer; font-family:inherit; transition:background 0.2s; }
-  .header-lang-btn:hover { background:rgba(255,255,255,0.25); }
+  .header { background:#1e3a5f; color:white; padding:0 28px; height:64px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 1px 6px rgba(0,0,0,0.25); border-bottom:1px solid rgba(255,255,255,0.07); position:sticky; top:0; z-index:100; }
+  .header-left  { display:flex; align-items:center; gap:12px; }
+  .header-monogram { width:36px; height:36px; background:rgba(255,255,255,0.12); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:0.72rem; font-weight:800; letter-spacing:0.04em; color:white; flex-shrink:0; border:1px solid rgba(255,255,255,0.15); }
+  .header-title { font-size:0.95rem; font-weight:700; letter-spacing:-0.01em; }
+  .header-sub   { font-size:0.7rem; opacity:0.5; letter-spacing:0.02em; margin-top:1px; }
+  .header-right { display:flex; align-items:center; gap:8px; }
+  .user-badge { background:rgba(255,255,255,0.08); padding:5px 12px; border-radius:6px; font-size:0.82rem; border:1px solid rgba(255,255,255,0.12); }
+  .role-badge { padding:3px 10px; border-radius:4px; font-size:0.68rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; }
+  .role-radiology { background:rgba(186,230,253,0.18); color:#bae6fd; border:1px solid rgba(186,230,253,0.22); }
+  .role-doctor    { background:rgba(134,239,172,0.18); color:#86efac; border:1px solid rgba(134,239,172,0.22); }
+  .btn-logout { background:rgba(255,255,255,0.07); color:rgba(255,255,255,0.8); border:1px solid rgba(255,255,255,0.18); padding:6px 14px; border-radius:6px; font-size:0.8rem; cursor:pointer; font-family:inherit; transition:all 0.15s; letter-spacing:0.02em; }
+  .btn-logout:hover { background:rgba(255,255,255,0.15); color:white; }
+  .header-lang-btn { background:rgba(255,255,255,0.07); color:rgba(255,255,255,0.8); border:1px solid rgba(255,255,255,0.18); padding:6px 14px; border-radius:6px; font-size:0.8rem; font-weight:600; cursor:pointer; font-family:inherit; transition:all 0.15s; letter-spacing:0.02em; }
+  .header-lang-btn:hover { background:rgba(255,255,255,0.15); color:white; }
 
   /* ===== Content ===== */
   .content { max-width:1100px; margin:0 auto; padding:28px 20px; }
-  .section-title { font-size:1.1rem; font-weight:700; color:#1a3a5c; margin-bottom:18px; padding-bottom:10px; border-bottom:2px solid #dee2e6; display:flex; align-items:center; gap:8px; }
-  .card { background:white; border-radius:12px; padding:24px; box-shadow:0 2px 12px rgba(0,0,0,0.07); margin-bottom:20px; }
+  .section-title { font-size:0.72rem; font-weight:700; color:#1e3a5f; margin-bottom:18px; display:flex; align-items:center; gap:10px; text-transform:uppercase; letter-spacing:0.08em; border-left:3px solid #1e3a5f; padding-left:12px; }
+  html[dir="rtl"] .section-title { border-left:none; border-right:3px solid #1e3a5f; padding-left:0; padding-right:12px; }
+  .card { background:white; border-radius:8px; padding:24px; box-shadow:0 1px 6px rgba(0,0,0,0.05); border:1px solid #e2e8f0; margin-bottom:20px; }
 
   /* ===== Form ===== */
   .form-group { margin-bottom:14px; text-align:right; }
   html[dir="ltr"] .form-group { text-align:left; }
-  .form-group label { display:block; font-size:0.82rem; font-weight:600; color:#495057; margin-bottom:5px; }
-  .form-group input,.form-group select,.form-group textarea { width:100%; padding:10px 13px; border:1.5px solid #dee2e6; border-radius:8px; font-size:0.9rem; font-family:inherit; transition:border-color 0.2s; background:#fff; }
-  .form-group input:focus,.form-group select:focus,.form-group textarea:focus { outline:none; border-color:#0d6efd; }
+  .form-group label { display:block; font-size:0.71rem; font-weight:700; color:#64748b; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.06em; }
+  .form-group input,.form-group select,.form-group textarea { width:100%; padding:10px 13px; border:1.5px solid #e2e8f0; border-radius:6px; font-size:0.9rem; font-family:inherit; transition:border-color 0.15s,box-shadow 0.15s; background:#fff; color:#0f172a; }
+  .form-group input:focus,.form-group select:focus,.form-group textarea:focus { outline:none; border-color:#1e3a5f; box-shadow:0 0 0 3px rgba(30,58,95,0.08); }
 
   /* ===== Buttons ===== */
-  .btn { padding:10px 22px; border:none; border-radius:8px; font-size:0.92rem; font-weight:600; font-family:inherit; cursor:pointer; transition:all 0.2s; }
-  .btn-primary { background:#0d6efd; color:white; width:100%; }
-  .btn-primary:hover { background:#0b5ed7; }
-  .btn-success { background:#198754; color:white; }
-  .btn-success:hover { background:#157347; }
-  .btn-outline { background:transparent; border:1.5px solid #0d6efd; color:#0d6efd; }
-  .btn-outline:hover { background:#0d6efd; color:white; }
-  .btn-warning { background:#ffc107; color:#000; border:none; padding:7px 16px; border-radius:6px; font-size:0.83rem; font-weight:600; cursor:pointer; font-family:inherit; }
-  .btn-warning:hover { background:#e0a800; }
+  .btn { padding:10px 22px; border:none; border-radius:6px; font-size:0.88rem; font-weight:600; font-family:inherit; cursor:pointer; transition:all 0.15s; letter-spacing:0.02em; }
+  .btn-primary { background:#1e3a5f; color:white; width:100%; }
+  .btn-primary:hover { background:#162d4a; }
+  .btn-success { background:#16a34a; color:white; }
+  .btn-success:hover { background:#15803d; }
+  .btn-outline { background:transparent; border:1.5px solid #1e3a5f; color:#1e3a5f; }
+  .btn-outline:hover { background:#1e3a5f; color:white; }
+  .btn-warning { background:transparent; color:#1e3a5f; border:1.5px solid #1e3a5f; padding:7px 16px; border-radius:6px; font-size:0.83rem; font-weight:600; cursor:pointer; font-family:inherit; letter-spacing:0.02em; transition:all 0.15s; }
+  .btn-warning:hover { background:#1e3a5f; color:white; }
 
   /* ===== Upload ===== */
-  .upload-zone { border:2px dashed #adb5bd; border-radius:10px; padding:24px; text-align:center; cursor:pointer; transition:all 0.2s; margin-bottom:14px; }
-  .upload-zone:hover { border-color:#0d6efd; background:#f8f9ff; }
-  .upload-zone.has-file { border-color:#198754; background:#f0fff4; }
+  .upload-zone { border:2px dashed #cbd5e1; border-radius:8px; padding:28px 24px; text-align:center; cursor:pointer; transition:all 0.2s; margin-bottom:14px; background:#fafafa; }
+  .upload-zone:hover { border-color:#1e3a5f; background:#f8fafc; }
+  .upload-zone.has-file { border-color:#16a34a; border-style:solid; background:#f0fdf4; }
   .upload-zone input { display:none; }
-  .upload-icon { font-size:36px; margin-bottom:8px; }
-  .upload-zone p { color:#6c757d; font-size:0.88rem; }
-  .previews-container { display:none; max-height:220px; overflow-y:auto; border:1px solid #dee2e6; border-radius:8px; padding:10px; margin-top:10px; background:#fafafa; gap:10px; flex-wrap:wrap; }
+  .upload-icon { font-size:32px; margin-bottom:8px; opacity:0.55; }
+  .upload-zone p { color:#64748b; font-size:0.85rem; }
+  .previews-container { display:none; max-height:220px; overflow-y:auto; border:1px solid #e2e8f0; border-radius:6px; padding:10px; margin-top:10px; background:#fafafa; gap:10px; flex-wrap:wrap; }
   .previews-container.show { display:flex; }
   .preview-thumb-wrap { position:relative; width:90px; height:90px; }
-  .preview-thumb { width:90px; height:90px; object-fit:cover; border-radius:6px; border:2px solid #dee2e6; }
-  .preview-thumb-name { position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.55); color:white; font-size:0.6rem; padding:2px 4px; border-radius:0 0 6px 6px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+  .preview-thumb { width:90px; height:90px; object-fit:cover; border-radius:4px; border:2px solid #e2e8f0; }
+  .preview-thumb-name { position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.55); color:white; font-size:0.6rem; padding:2px 4px; border-radius:0 0 4px 4px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
 
   /* ===== Table ===== */
-  table { width:100%; border-collapse:collapse; font-size:0.88rem; }
-  th { background:#f8f9fa; padding:11px 14px; text-align:right; font-weight:600; color:#495057; border-bottom:2px solid #dee2e6; }
+  table { width:100%; border-collapse:collapse; font-size:0.87rem; }
+  th { background:#f1f5f9; padding:10px 14px; text-align:right; font-weight:700; color:#475569; border-bottom:2px solid #e2e8f0; font-size:0.71rem; text-transform:uppercase; letter-spacing:0.06em; }
   html[dir="ltr"] th { text-align:left; }
-  td { padding:12px 14px; border-bottom:1px solid #f0f0f0; vertical-align:middle; }
-  tr:hover td { background:#fafafa; }
-  .file-number { font-weight:700; color:#0d6efd; font-family:monospace; }
-  .btn-view { background:#0d6efd; color:white; border:none; padding:6px 16px; border-radius:6px; font-size:0.82rem; font-weight:600; cursor:pointer; font-family:inherit; transition:background 0.2s; }
-  .btn-view:hover { background:#0b5ed7; }
+  td { padding:12px 14px; border-bottom:1px solid #f1f5f9; vertical-align:middle; color:#334155; }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:#f8fafc; }
+  .file-number { font-weight:700; color:#1e3a5f; font-family:'SF Mono','Fira Code',monospace; font-size:0.84rem; }
+  .btn-view { background:#1e3a5f; color:white; border:none; padding:6px 16px; border-radius:5px; font-size:0.79rem; font-weight:600; cursor:pointer; font-family:inherit; transition:background 0.15s; letter-spacing:0.02em; }
+  .btn-view:hover { background:#162d4a; }
 
   /* ===== Modal ===== */
-  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:1000; align-items:center; justify-content:center; }
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:1000; align-items:center; justify-content:center; }
   .modal-overlay.show { display:flex; }
-  .modal { background:white; border-radius:16px; width:92%; max-width:780px; max-height:92vh; overflow-y:auto; box-shadow:0 24px 80px rgba(0,0,0,0.4); }
-  .modal-header { background:#1a3a5c; color:white; padding:16px 22px; border-radius:16px 16px 0 0; display:flex; justify-content:space-between; align-items:center; }
-  .modal-header h3 { font-size:0.97rem; }
-  .btn-close { background:rgba(255,255,255,0.2); border:none; color:white; width:30px; height:30px; border-radius:50%; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; }
-  .btn-close:hover { background:rgba(255,255,255,0.35); }
+  .modal { background:white; border-radius:10px; width:92%; max-width:780px; max-height:92vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.35); }
+  .modal-header { background:#1e3a5f; color:white; padding:16px 22px; border-radius:10px 10px 0 0; display:flex; justify-content:space-between; align-items:center; }
+  .modal-header h3 { font-size:0.88rem; font-weight:700; letter-spacing:0.02em; }
+  .btn-close { background:rgba(255,255,255,0.1); border:none; color:white; width:28px; height:28px; border-radius:50%; font-size:0.88rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.15s; }
+  .btn-close:hover { background:rgba(255,255,255,0.22); }
   .modal-body { padding:22px; }
-  .patient-info { background:#f8f9fa; border-radius:10px; padding:14px 18px; margin-bottom:18px; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-  .info-item label { font-size:0.75rem; color:#6c757d; font-weight:600; display:block; margin-bottom:2px; }
-  .info-item span  { font-size:0.9rem; font-weight:600; color:#1a2a3a; }
-  .modal-img { width:100%; border-radius:10px; border:1px solid #dee2e6; }
+  .patient-info { background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:14px 18px; margin-bottom:18px; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .info-item label { font-size:0.67rem; color:#64748b; font-weight:700; display:block; margin-bottom:3px; text-transform:uppercase; letter-spacing:0.07em; }
+  .info-item span  { font-size:0.9rem; font-weight:600; color:#0f172a; }
+  .modal-img { width:100%; border-radius:6px; border:1px solid #e2e8f0; }
   .modal-actions { display:flex; gap:10px; margin-top:14px; justify-content:flex-end; flex-wrap:wrap; }
-  .img-status-bar { display:flex; align-items:center; gap:8px; padding:8px 14px; border-radius:8px; margin-bottom:12px; font-size:0.85rem; font-weight:600; }
-  .img-status-bar.encrypted { background:#fff3cd; color:#856404; border:1px solid #ffd54f; }
-  .img-status-bar.decrypted { background:#d1e7dd; color:#0a3622; border:1px solid #a3cfbb; }
+  .img-status-bar { display:flex; align-items:center; gap:8px; padding:9px 14px; border-radius:6px; margin-bottom:12px; font-size:0.82rem; font-weight:600; }
+  .img-status-bar.encrypted { background:#eff6ff; color:#1e40af; border:1px solid #bfdbfe; }
+  .img-status-bar.decrypted { background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0; }
 
   /* ===== Misc ===== */
-  .error-msg { background:#fff3f3; border:1px solid #f5c2c7; color:#842029; padding:10px 14px; border-radius:8px; font-size:0.83rem; margin-top:10px; display:none; }
-  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); padding:12px 24px; border-radius:10px; font-size:0.88rem; font-weight:600; z-index:9999; opacity:0; transition:opacity 0.3s; pointer-events:none; }
+  .error-msg { background:#fef2f2; border:1px solid #fecaca; color:#991b1b; padding:10px 14px; border-radius:6px; font-size:0.83rem; margin-top:10px; display:none; }
+  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); padding:12px 24px; border-radius:7px; font-size:0.85rem; font-weight:600; z-index:9999; opacity:0; transition:opacity 0.3s; pointer-events:none; box-shadow:0 4px 16px rgba(0,0,0,0.2); }
   .toast.show { opacity:1; }
-  .toast.success { background:#198754; color:white; }
-  .toast.error   { background:#dc3545; color:white; }
-  .loading { display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,0.4); border-top-color:white; border-radius:50%; animation:spin 0.7s linear infinite; margin-right:6px; vertical-align:middle; }
+  .toast.success { background:#16a34a; color:white; }
+  .toast.error   { background:#dc2626; color:white; }
+  .loading { display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,0.35); border-top-color:white; border-radius:50%; animation:spin 0.7s linear infinite; margin-right:6px; vertical-align:middle; }
   @keyframes spin { to { transform:rotate(360deg); } }
-  .empty-state { text-align:center; padding:40px; color:#adb5bd; }
-  .empty-state .icon { font-size:40px; margin-bottom:10px; }
-  .security-note { background:#fff8e1; border:1px solid #ffd54f; border-radius:8px; padding:9px 14px; font-size:0.8rem; color:#7a5800; margin-bottom:18px; }
+  .empty-state { text-align:center; padding:48px 20px; color:#94a3b8; }
+  .empty-state .icon { font-size:32px; margin-bottom:12px; opacity:0.35; }
+  .empty-state p { font-size:0.875rem; }
+  .security-note { background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:9px 14px; font-size:0.8rem; color:#475569; margin-bottom:18px; letter-spacing:0.01em; }
+  .pwd-rule { display:flex; align-items:center; gap:7px; padding:2px 0; color:#94a3b8; transition:color 0.2s; font-size:0.77rem; }
+  .pwd-rule.ok { color:#16a34a; }
+  .pwd-rule .dot { width:7px; height:7px; border-radius:50%; background:#e2e8f0; flex-shrink:0; transition:background 0.2s; }
+  .pwd-rule.ok .dot { background:#16a34a; }
 </style>
 </head>
 <body>
@@ -133,7 +143,7 @@
   <button class="lang-btn" onclick="toggleLang()" id="lang-btn">🌐 English</button>
 
   <div class="login-box">
-    <div class="login-logo">🏥</div>
+    <div class="login-monogram"><span>MI</span></div>
     <div class="login-title"  data-ar="نظام تشفير الصور الطبية"   data-en="Medical Image Encryption System">نظام تشفير الصور الطبية</div>
     <div class="login-sub"    data-ar="يرجى تسجيل الدخول للمتابعة" data-en="Please sign in to continue">يرجى تسجيل الدخول للمتابعة</div>
 
@@ -147,15 +157,10 @@
     </div>
 
     <button class="btn btn-primary" onclick="login()" data-ar="تسجيل الدخول" data-en="Sign In">تسجيل الدخول</button>
-    <span class="forgot-link" onclick="openReset()" data-ar="🔑 نسيت كلمة المرور؟" data-en="🔑 Forgot password?">🔑 نسيت كلمة المرور؟</span>
+    <span class="forgot-link" onclick="openReset()" data-ar="نسيت كلمة المرور؟" data-en="Forgot password?">نسيت كلمة المرور؟</span>
     <div class="error-msg" id="login-error"></div>
 
-    <div class="demo-box">
-      <strong data-ar="حسابات تجريبية:" data-en="Demo accounts:">حسابات تجريبية:</strong><br>
-      <span data-ar="أدمن" data-en="Admin">أدمن</span>: <code>admin</code> / <code>admin123</code><br>
-      <span data-ar="دكتور أشعة" data-en="Radiologist">دكتور أشعة</span>: <code>radiology1</code> / <code>1234</code><br>
-      <span data-ar="دكتور مسؤول" data-en="Physician">دكتور مسؤول</span>: <code>doctor1</code> / <code>1234</code>
-    </div>
+
   </div>
 </div>
 
@@ -163,7 +168,7 @@
 <div id="app-page">
   <div class="header">
     <div class="header-left">
-      <div class="header-logo">🔐</div>
+      <div class="header-monogram">MI</div>
       <div>
         <div class="header-title" data-ar="نظام تشفير الصور الطبية" data-en="Medical Image Encryption">نظام تشفير الصور الطبية</div>
         <div class="header-sub"   data-ar="Medical Image Encryption System" data-en="Secure Medical Imaging">Medical Image Encryption System</div>
@@ -181,9 +186,9 @@
 
     <!-- قسم دكتور الأشعة -->
     <div id="section-radiology" style="display:none">
-      <div class="security-note" data-ar="🔒 جميع الصور تُشفَّر تلقائياً قبل التخزين" data-en="🔒 All images are automatically encrypted before storage">🔒 جميع الصور تُشفَّر تلقائياً قبل التخزين</div>
+      <div class="security-note" data-ar="جميع الصور تُشفَّر تلقائياً قبل التخزين" data-en="All images are automatically encrypted before storage">جميع الصور تُشفَّر تلقائياً قبل التخزين</div>
       <div class="card">
-        <div class="section-title" data-ar="📤 رفع صور طبية" data-en="📤 Upload Medical Images">📤 رفع صور طبية</div>
+        <div class="section-title" data-ar="رفع صور طبية" data-en="Upload Medical Images">رفع صور طبية</div>
         <div class="form-group">
           <label data-ar="اختر المريض" data-en="Select Patient">اختر المريض</label>
           <select id="patient-select"><option value="" data-ar="— اختر المريض —" data-en="— Select Patient —">— اختر المريض —</option></select>
@@ -200,20 +205,20 @@
           <label data-ar="ملاحظات (اختياري)" data-en="Notes (optional)">ملاحظات (اختياري)</label>
           <textarea id="notes" rows="2" data-ar-placeholder="نوع الصورة، ملاحظات..." data-en-placeholder="Image type, notes..." placeholder="نوع الصورة، ملاحظات..."></textarea>
         </div>
-        <button class="btn btn-success" id="upload-btn" onclick="uploadImage()" style="width:100%" data-ar="🔒 تشفير ورفع الصور" data-en="🔒 Encrypt & Upload">🔒 تشفير ورفع الصور</button>
+        <button class="btn btn-success" id="upload-btn" onclick="uploadImage()" style="width:100%" data-ar="تشفير ورفع الصور" data-en="Encrypt & Upload">تشفير ورفع الصور</button>
       </div>
 
       <div class="card">
-        <div class="section-title" data-ar="📋 سجل الصور المرفوعة" data-en="📋 Uploaded Images Log">📋 سجل الصور المرفوعة</div>
+        <div class="section-title" data-ar="سجل الصور المرفوعة" data-en="Uploaded Images Log">سجل الصور المرفوعة</div>
         <div id="radiology-images-list"><div class="empty-state"><div class="icon">📂</div><p data-ar="لا توجد صور بعد" data-en="No images yet">لا توجد صور بعد</p></div></div>
       </div>
     </div>
 
     <!-- قسم الدكتور -->
     <div id="section-doctor" style="display:none">
-      <div class="security-note" data-ar="🔓 الصور مخزّنة مشفّرة — اضغط عرض لرؤية الصورة المشفّرة ثم فك التشفير" data-en="🔓 Images are stored encrypted — click View to see encrypted image, then decrypt">🔓 الصور مخزّنة مشفّرة — اضغط عرض لرؤية الصورة المشفّرة ثم فك التشفير</div>
+      <div class="security-note" data-ar="الصور مخزّنة مشفّرة — اضغط عرض لرؤية الصورة المشفّرة ثم فك التشفير" data-en="Images are stored encrypted — click View to see the encrypted image, then decrypt">الصور مخزّنة مشفّرة — اضغط عرض لرؤية الصورة المشفّرة ثم فك التشفير</div>
       <div class="card">
-        <div class="section-title" data-ar="🩻 صور مرضاي" data-en="🩻 My Patients' Images">🩻 صور مرضاي</div>
+        <div class="section-title" data-ar="صور مرضاي" data-en="My Patients' Images">صور مرضاي</div>
         <div id="doctor-images-list"><div class="empty-state"><div class="icon">📂</div><p data-ar="لا توجد صور بعد" data-en="No images yet">لا توجد صور بعد</p></div></div>
       </div>
     </div>
@@ -225,7 +230,7 @@
 <div class="modal-overlay" id="reset-modal">
   <div class="modal" style="max-width:420px">
     <div class="modal-header">
-      <h3 data-ar="🔑 استعادة كلمة المرور" data-en="🔑 Password Recovery">🔑 استعادة كلمة المرور</h3>
+      <h3 data-ar="استعادة كلمة المرور" data-en="Password Recovery">استعادة كلمة المرور</h3>
       <button class="btn-close" onclick="closeReset()">✕</button>
     </div>
     <div class="modal-body">
@@ -239,15 +244,22 @@
       </div>
       <div class="form-group">
         <label data-ar="كلمة المرور الجديدة" data-en="New Password">كلمة المرور الجديدة</label>
-        <input type="password" id="reset-new-pwd" data-ar-placeholder="كلمة مرور جديدة" data-en-placeholder="New password" placeholder="كلمة مرور جديدة">
+        <input type="password" id="reset-new-pwd" data-ar-placeholder="مثال: Doctor@123" oninput="checkPwdRules()" data-en-placeholder="e.g. Doctor@123" placeholder="مثال: Doctor@123" oninput="checkPwdRules()">
       </div>
+        <div style="margin-top:6px;padding:10px 12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px">
+          <div class="pwd-rule" id="r-r1"><div class="dot"></div><span data-ar="8 أحرف على الأقل" data-en="At least 8 characters">8 أحرف على الأقل</span></div>
+          <div class="pwd-rule" id="r-r2"><div class="dot"></div><span data-ar="حرف كبير (A-Z)" data-en="Uppercase (A-Z)">حرف كبير (A-Z)</span></div>
+          <div class="pwd-rule" id="r-r3"><div class="dot"></div><span data-ar="حرف صغير (a-z)" data-en="Lowercase (a-z)">حرف صغير (a-z)</span></div>
+          <div class="pwd-rule" id="r-r4"><div class="dot"></div><span data-ar="رقم (0-9)" data-en="Number (0-9)">رقم (0-9)</span></div>
+          <div class="pwd-rule" id="r-r5"><div class="dot"></div><span data-ar="رمز خاص (!@#$...)" data-en="Special char">رمز خاص (!@#$...)</span></div>
+        </div>
       <div class="form-group">
         <label data-ar="تأكيد كلمة المرور" data-en="Confirm Password">تأكيد كلمة المرور</label>
         <input type="password" id="reset-new-pwd2" data-ar-placeholder="أعد كتابة كلمة المرور" data-en-placeholder="Re-enter password" placeholder="أعد كتابة كلمة المرور">
       </div>
       <div class="modal-actions">
         <button class="btn btn-outline" onclick="closeReset()" data-ar="إلغاء" data-en="Cancel">إلغاء</button>
-        <button class="btn btn-primary" style="width:auto" onclick="submitReset()" data-ar="✅ تغيير كلمة المرور" data-en="✅ Reset Password">✅ تغيير كلمة المرور</button>
+        <button class="btn btn-primary" style="width:auto" onclick="submitReset()" data-ar="تغيير كلمة المرور" data-en="Reset Password">تغيير كلمة المرور</button>
       </div>
     </div>
   </div>
@@ -257,7 +269,7 @@
 <div class="modal-overlay" id="image-modal">
   <div class="modal">
     <div class="modal-header">
-      <h3 id="modal-title" data-ar="🩻 عرض الصورة الطبية" data-en="🩻 Medical Image Viewer">🩻 عرض الصورة الطبية</h3>
+      <h3 id="modal-title" data-ar="عرض الصورة الطبية" data-en="Medical Image Viewer">عرض الصورة الطبية</h3>
       <button class="btn-close" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body">
@@ -269,16 +281,16 @@
         <div class="info-item" style="grid-column:span 2"><label data-ar="ملاحظات" data-en="Notes">ملاحظات</label><span id="modal-notes">—</span></div>
       </div>
       <div class="img-status-bar encrypted" id="img-status-bar"
-           data-ar-encrypted="🔒 الصورة معروضة بحالتها المشفّرة"
-           data-en-encrypted="🔒 Image shown in encrypted form"
-           data-ar-decrypted="🔓 تم فك التشفير — الصورة الأصلية"
-           data-en-decrypted="🔓 Decrypted — Original Image">
-        🔒 الصورة معروضة بحالتها المشفّرة
+           data-ar-encrypted="الصورة معروضة بحالتها المشفّرة"
+           data-en-encrypted="Image shown in encrypted form"
+           data-ar-decrypted="تم فك التشفير — الصورة الأصلية"
+           data-en-decrypted="Decrypted — Original Image">
+        الصورة معروضة بحالتها المشفّرة
       </div>
       <img id="modal-img" class="modal-img" src="" alt="">
       <div class="modal-actions">
-        <button class="btn btn-warning" id="btn-decrypt-img" onclick="decryptCurrentImage()" data-ar="🔓 فك التشفير" data-en="🔓 Decrypt Image">🔓 فك التشفير</button>
-        <button class="btn btn-outline"  id="btn-download"    onclick="downloadImage()" style="display:none" data-ar="⬇️ تحميل الصورة" data-en="⬇️ Download Image">⬇️ تحميل الصورة</button>
+        <button class="btn btn-warning" id="btn-decrypt-img" onclick="decryptCurrentImage()" data-ar="فك التشفير" data-en="Decrypt Image">فك التشفير</button>
+        <button class="btn btn-outline"  id="btn-download"    onclick="downloadImage()" style="display:none" data-ar="تحميل الصورة" data-en="Download Image">تحميل الصورة</button>
         <button class="btn btn-primary"  style="width:auto"   onclick="closeModal()"   data-ar="إغلاق"          data-en="Close">إغلاق</button>
       </div>
     </div>
@@ -293,66 +305,88 @@
   // ======================================================
   const T = {
     ar: {
-      roleRadiology: 'دكتور أشعة',
-      roleDoctor:    'دكتور مسؤول',
-      langBtn:       '🌐 English',
-      errorFill:     'يرجى إدخال اسم المستخدم وكلمة المرور',
-      errorServer:   'تعذّر الاتصال بالخادم',
-      selectPatient: '— اختر المريض —',
-      filesSelected1:'تم اختيار صورة واحدة',
-      filesSelectedN:'تم اختيار {n} صور',
-      errSelectPt:   'اختر المريض أولاً',
-      errSelectImg:  'اختر صورة واحدة على الأقل',
-      uploading:     'جارٍ تشفير ورفع {n} صورة...',
-      uploadBtn:     '🔒 تشفير ورفع الصور',
-      errUpload:     'خطأ في الرفع',
-      errServer:     'تعذّر الاتصال بالخادم',
-      decrypting:    'جارٍ فك التشفير...',
-      decryptBtn:    '🔓 فك التشفير',
-      errLoadImg:    'خطأ في تحميل الصورة',
-      errDecrypt:    'خطأ في فك التشفير',
-      errLoadImg2:   'تعذّر تحميل الصورة',
-      errDecrypt2:   'تعذّر فك التشفير',
-      colFile:       'رقم الملف', colPatient:'اسم المريض', colDate:'تاريخ الرفع',
-      colNotes:'ملاحظات', colStatus:'الحالة', colBy:'رُفعت بواسطة', colView:'عرض',
+      roleRadiology:  'دكتور أشعة',
+      roleDoctor:     'دكتور مسؤول',
+      langBtn:        '🌐 English',
+      errorFill:      'يرجى إدخال اسم المستخدم وكلمة المرور',
+      errorServer:    'تعذّر الاتصال بالخادم',
+      loginError:     'اسم المستخدم أو كلمة المرور غلط',
+      selectPatient:  '— اختر المريض —',
+      filesSelected1: 'تم اختيار صورة واحدة',
+      filesSelectedN: 'تم اختيار {n} صور',
+      errSelectPt:    'اختر المريض أولاً',
+      errSelectImg:   'اختر صورة واحدة على الأقل',
+      uploading:      'جارٍ تشفير ورفع {n} صورة...',
+      uploadBtn:      'تشفير ورفع الصور',
+      uploadSuccess:  'تم رفع {n} صورة بنجاح',
+      errUpload:      'خطأ في الرفع',
+      errServer:      'تعذّر الاتصال بالخادم',
+      decrypting:     'جارٍ فك التشفير...',
+      decryptBtn:     'فك التشفير',
+      errLoadImg:     'خطأ في تحميل الصورة',
+      errDecrypt:     'خطأ في فك التشفير',
+      errLoadImg2:    'تعذّر تحميل الصورة',
+      errDecrypt2:    'تعذّر فك التشفير',
+      colFile:        'رقم الملف',
+      colPatient:     'اسم المريض',
+      colDate:        'تاريخ الرفع',
+      colNotes:       'ملاحظات',
+      colStatus:      'الحالة',
+      colBy:          'رُفعت بواسطة',
+      colView:        'عرض',
       statusEncrypted:'🔒 مشفّرة',
-      btnView:'👁️ عرض',
-      emptyImages:'لا توجد صور بعد',
-      resetFill:'يرجى تعبئة جميع الحقول',
-      resetMismatch:'كلمة المرور الجديدة غير متطابقة',
-      modalTitleEnc:'🔒 الصورة المشفّرة',
-      modalTitleDec:'🔓 الصورة الأصلية',
+      btnView:        'عرض',
+      emptyImages:    'لا توجد صور بعد',
+      resetFill:      'يرجى تعبئة جميع الحقول',
+      resetMismatch:  'كلمة المرور الجديدة غير متطابقة',
+      resetSuccess:   'تم تغيير كلمة المرور بنجاح',
+      modalTitleEnc:  'الصورة المشفّرة',
+      modalTitleDec:  'الصورة الأصلية',
+      imgStatusEnc:   '🔒 الصورة معروضة بحالتها المشفّرة',
+      imgStatusDec:   '🔓 تم فك التشفير — الصورة الأصلية',
+      logout:         'تسجيل الخروج',
     },
     en: {
-      roleRadiology: 'Radiologist',
-      roleDoctor:    'Physician',
-      langBtn:       '🌐 عربي',
-      errorFill:     'Please enter username and password',
-      errorServer:   'Could not connect to server',
-      selectPatient: '— Select Patient —',
-      filesSelected1:'1 image selected',
-      filesSelectedN:'{n} images selected',
-      errSelectPt:   'Please select a patient first',
-      errSelectImg:  'Please select at least one image',
-      uploading:     'Encrypting & uploading {n} image(s)...',
-      uploadBtn:     '🔒 Encrypt & Upload',
-      errUpload:     'Upload error',
-      errServer:     'Could not connect to server',
-      decrypting:    'Decrypting...',
-      decryptBtn:    '🔓 Decrypt Image',
-      errLoadImg:    'Error loading image',
-      errDecrypt:    'Decryption error',
-      errLoadImg2:   'Could not load image',
-      errDecrypt2:   'Could not decrypt image',
-      colFile:       'File No.', colPatient:'Patient', colDate:'Upload Date',
-      colNotes:'Notes', colStatus:'Status', colBy:'Uploaded By', colView:'View',
+      roleRadiology:  'Radiologist',
+      roleDoctor:     'Physician',
+      langBtn:        '🌐 عربي',
+      errorFill:      'Please enter username and password',
+      errorServer:    'Could not connect to server',
+      loginError:     'Invalid username or password',
+      selectPatient:  '— Select Patient —',
+      filesSelected1: '1 image selected',
+      filesSelectedN: '{n} images selected',
+      errSelectPt:    'Please select a patient first',
+      errSelectImg:   'Please select at least one image',
+      uploading:      'Encrypting & uploading {n} image(s)...',
+      uploadBtn:      'Encrypt & Upload',
+      uploadSuccess:  '{n} image(s) uploaded successfully',
+      errUpload:      'Upload error',
+      errServer:      'Could not connect to server',
+      decrypting:     'Decrypting...',
+      decryptBtn:     'Decrypt Image',
+      errLoadImg:     'Error loading image',
+      errDecrypt:     'Decryption error',
+      errLoadImg2:    'Could not load image',
+      errDecrypt2:    'Could not decrypt image',
+      colFile:        'File No.',
+      colPatient:     'Patient',
+      colDate:        'Upload Date',
+      colNotes:       'Notes',
+      colStatus:      'Status',
+      colBy:          'Uploaded By',
+      colView:        'View',
       statusEncrypted:'🔒 Encrypted',
-      btnView:'👁️ View',
-      emptyImages:'No images yet',
-      resetFill:'Please fill all fields',
-      resetMismatch:'Passwords do not match',
-      modalTitleEnc:'🔒 Encrypted Image',
-      modalTitleDec:'🔓 Original Image',
+      btnView:        'View',
+      emptyImages:    'No images yet',
+      resetFill:      'Please fill all fields',
+      resetMismatch:  'Passwords do not match',
+      resetSuccess:   'Password changed successfully',
+      modalTitleEnc:  'Encrypted Image',
+      modalTitleDec:  'Original Image',
+      imgStatusEnc:   '🔒 Image shown in encrypted form',
+      imgStatusDec:   '🔓 Decrypted — Original Image',
+      logout:         'Sign Out',
     }
   };
 
@@ -366,28 +400,37 @@
     document.documentElement.dir  = isAr ? 'rtl' : 'ltr';
 
     // النصوص العادية
-    document.querySelectorAll(`[data-${lang}]`).forEach(el => {
-      el.textContent = el.getAttribute(`data-${lang}`);
+    document.querySelectorAll('[data-ar]').forEach(el => {
+      el.textContent = el.getAttribute(`data-${lang}`) || el.getAttribute('data-ar');
     });
 
     // الـ placeholders
-    document.querySelectorAll(`[data-${lang}-placeholder]`).forEach(el => {
-      el.placeholder = el.getAttribute(`data-${lang}-placeholder`);
+    document.querySelectorAll('[data-ar-placeholder]').forEach(el => {
+      el.placeholder = el.getAttribute(`data-${lang}-placeholder`) || el.getAttribute('data-ar-placeholder');
     });
 
     // أزرار اللغة
-    const lbl = isAr ? '🌐 English' : '🌐 عربي';
     ['lang-btn','header-lang-btn'].forEach(id => {
       const el = document.getElementById(id);
-      if (el) el.textContent = lbl;
+      if (el) el.textContent = t('langBtn');
     });
 
     // تحديث شريط الحالة لو كان المودال مفتوح
     const bar = document.getElementById('img-status-bar');
     if (bar) {
-      const stateKey = bar.classList.contains('decrypted') ? 'decrypted' : 'encrypted';
-      bar.textContent = bar.getAttribute(`data-${lang}-${stateKey}`);
+      const key = bar.classList.contains('decrypted') ? 'imgStatusDec' : 'imgStatusEnc';
+      bar.textContent = t(key);
     }
+
+    // تحديث زر الدور
+    const rb = document.getElementById('role-badge');
+    if (rb && currentUser) {
+      rb.textContent = currentUser.role === 'radiology' ? t('roleRadiology') : t('roleDoctor');
+    }
+
+    // تحديث زر الخروج
+    const lo = document.querySelector('.btn-logout');
+    if (lo) lo.textContent = t('logout');
   }
 
   function toggleLang() {
@@ -430,7 +473,7 @@
     try {
       const res  = await fetch('/login', { method:'POST', body:fd });
       const data = await res.json();
-      if (!res.ok) { showError(data.detail); return; }
+      if (!res.ok) { showError(data.detail || t('loginError')); return; }
       currentUser = data;
       localStorage.setItem('currentUser', JSON.stringify(currentUser));
       showApp();
@@ -500,7 +543,7 @@
     });
     const data = await res.json();
     if (!res.ok) { showToast(data.detail,'error'); return; }
-    showToast(data.message,'success');
+    showToast(t('resetSuccess'),'success');
     closeReset();
   }
 
@@ -568,7 +611,7 @@
       const res  = await fetch('/upload', { method:'POST', body:fd });
       const data = await res.json();
       if (!res.ok) { showToast(data.detail||t('errUpload'),'error'); return; }
-      showToast(data.message,'success');
+      showToast(t('uploadSuccess').replace('{n}', files.length),'success');
       document.getElementById('patient-select').value       = '';
       document.getElementById('file-input').value           = '';
       document.getElementById('notes').value                = '';
@@ -595,7 +638,7 @@
       <td><span class="file-number">${img.file_number}</span></td>
       <td>${img.patient_name}</td><td>${img.uploaded_at}</td>
       <td>${img.notes||'—'}</td>
-      <td><span style="color:#198754;font-weight:600">${t('statusEncrypted')}</span></td>
+      <td><span style="color:#16a34a;font-weight:600;font-size:0.82rem;letter-spacing:0.02em">${t('statusEncrypted')}</span></td>
     </tr>`).join('')}</tbody></table>`;
   }
 
@@ -631,7 +674,7 @@
       document.getElementById('modal-img').src = 'data:image/png;base64,'+data.image_data;
       const bar = document.getElementById('img-status-bar');
       bar.className   = 'img-status-bar encrypted';
-      bar.textContent = bar.getAttribute(`data-${lang}-encrypted`);
+      bar.textContent = t('imgStatusEnc');
       document.getElementById('modal-title').textContent       = t('modalTitleEnc');
       document.getElementById('btn-decrypt-img').style.display = 'inline-flex';
       document.getElementById('btn-download').style.display    = 'none';
@@ -654,7 +697,7 @@
       document.getElementById('modal-img').src = 'data:image/png;base64,'+data.image_data;
       const bar = document.getElementById('img-status-bar');
       bar.className   = 'img-status-bar decrypted';
-      bar.textContent = bar.getAttribute(`data-${lang}-decrypted`);
+      bar.textContent = t('imgStatusDec');
       document.getElementById('modal-title').textContent       = t('modalTitleDec');
       document.getElementById('btn-decrypt-img').style.display = 'none';
       document.getElementById('btn-download').style.display    = 'inline-flex';
@@ -696,6 +739,16 @@
     const t=document.getElementById('toast');
     t.textContent=msg; t.className=`toast show ${type}`;
     setTimeout(()=>t.classList.remove('show'),3000);
+  }
+
+  function checkPwdRules() {
+    const pwd = document.getElementById('reset-new-pwd').value;
+    const chk = (id,test) => document.getElementById(id).classList.toggle('ok',test);
+    chk('r-r1', pwd.length >= 8);
+    chk('r-r2', /[A-Z]/.test(pwd));
+    chk('r-r3', /[a-z]/.test(pwd));
+    chk('r-r4', /[0-9]/.test(pwd));
+    chk('r-r5', /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pwd));
   }
 
   document.getElementById('image-modal').addEventListener('click',function(e){if(e.target===this)closeModal();});

@@ -4,31 +4,33 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>لوحة الأدمن</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'Segoe UI',Tahoma,sans-serif; background:#f0f4f8; color:#1a2a3a; min-height:100vh; }
+  body { font-family:'Inter','Segoe UI',Tahoma,sans-serif; background:#f1f5f9; color:#0f172a; min-height:100vh; }
 
   /* Header */
-  .header { background:#1a3a5c; color:white; padding:0 28px; height:64px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 8px rgba(0,0,0,0.2); position:sticky; top:0; z-index:100; }
-  .header-left { display:flex; align-items:center; gap:10px; }
-  .header-logo  { font-size:22px; }
-  .header-title { font-size:1rem; font-weight:700; }
-  .header-sub   { font-size:0.72rem; opacity:0.7; }
-  .header-right { display:flex; align-items:center; gap:10px; }
-  .admin-badge  { background:#ffc107; color:#000; padding:4px 12px; border-radius:12px; font-size:0.8rem; font-weight:700; }
-  .btn-logout   { background:rgba(255,255,255,0.15); color:white; border:1px solid rgba(255,255,255,0.3); padding:6px 14px; border-radius:6px; font-size:0.82rem; cursor:pointer; font-family:inherit; transition:background 0.2s; }
-  .btn-logout:hover { background:rgba(255,255,255,0.25); }
-  .header-lang-btn { background:rgba(255,255,255,0.15); color:white; border:1px solid rgba(255,255,255,0.3); padding:6px 14px; border-radius:6px; font-size:0.82rem; font-weight:600; cursor:pointer; font-family:inherit; transition:background 0.2s; }
-  .header-lang-btn:hover { background:rgba(255,255,255,0.25); }
+  .header { background:#1e3a5f; color:white; padding:0 28px; height:64px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 1px 6px rgba(0,0,0,0.25); border-bottom:1px solid rgba(255,255,255,0.07); position:sticky; top:0; z-index:100; }
+  .header-left { display:flex; align-items:center; gap:12px; }
+  .header-monogram { width:36px; height:36px; background:rgba(255,255,255,0.12); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:0.72rem; font-weight:800; letter-spacing:0.04em; color:white; flex-shrink:0; border:1px solid rgba(255,255,255,0.15); }
+  .header-title { font-size:0.95rem; font-weight:700; letter-spacing:-0.01em; }
+  .header-sub   { font-size:0.7rem; opacity:0.5; letter-spacing:0.02em; margin-top:1px; }
+  .header-right { display:flex; align-items:center; gap:8px; }
+  .admin-badge  { background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.9); padding:4px 12px; border-radius:4px; font-size:0.7rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; border:1px solid rgba(255,255,255,0.18); }
+  .btn-logout   { background:rgba(255,255,255,0.07); color:rgba(255,255,255,0.8); border:1px solid rgba(255,255,255,0.18); padding:6px 14px; border-radius:6px; font-size:0.8rem; cursor:pointer; font-family:inherit; transition:all 0.15s; letter-spacing:0.02em; }
+  .btn-logout:hover { background:rgba(255,255,255,0.15); color:white; }
+  .header-lang-btn { background:rgba(255,255,255,0.07); color:rgba(255,255,255,0.8); border:1px solid rgba(255,255,255,0.18); padding:6px 14px; border-radius:6px; font-size:0.8rem; font-weight:600; cursor:pointer; font-family:inherit; transition:all 0.15s; letter-spacing:0.02em; }
+  .header-lang-btn:hover { background:rgba(255,255,255,0.15); color:white; }
 
   /* Layout */
   .content { max-width:1100px; margin:0 auto; padding:28px 20px; }
 
   /* Tabs */
-  .tabs { display:flex; gap:4px; margin-bottom:22px; background:white; padding:6px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); width:fit-content; }
-  .tab-btn { padding:10px 24px; border:none; border-radius:8px; font-size:0.9rem; font-weight:600; font-family:inherit; cursor:pointer; transition:all 0.2s; background:transparent; color:#6c757d; }
-  .tab-btn.active { background:#1a3a5c; color:white; }
-  .tab-btn:hover:not(.active) { background:#f0f4f8; color:#1a3a5c; }
+  .tabs { display:flex; gap:2px; margin-bottom:24px; background:white; padding:5px; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,0.06); border:1px solid #e2e8f0; width:fit-content; }
+  .tab-btn { padding:9px 22px; border:none; border-radius:6px; font-size:0.84rem; font-weight:600; font-family:inherit; cursor:pointer; transition:all 0.15s; background:transparent; color:#64748b; letter-spacing:0.02em; }
+  .tab-btn.active { background:#1e3a5f; color:white; }
+  .tab-btn:hover:not(.active) { background:#f1f5f9; color:#1e3a5f; }
   .tab-section { display:none; }
   .tab-section.active { display:block; }
 
@@ -36,56 +38,87 @@
   .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:22px; }
 
   /* Card */
-  .card { background:white; border-radius:12px; padding:22px; box-shadow:0 2px 12px rgba(0,0,0,0.07); margin-bottom:20px; }
-  .card-title { font-size:1rem; font-weight:700; color:#1a3a5c; margin-bottom:18px; padding-bottom:10px; border-bottom:2px solid #f0f4f8; display:flex; align-items:center; gap:8px; }
+  .card { background:white; border-radius:8px; padding:22px; box-shadow:0 1px 6px rgba(0,0,0,0.05); border:1px solid #e2e8f0; margin-bottom:20px; }
+  .card-title { font-size:0.72rem; font-weight:700; color:#1e3a5f; margin-bottom:18px; padding-bottom:10px; border-left:3px solid #1e3a5f; padding-left:12px; display:flex; align-items:center; gap:8px; text-transform:uppercase; letter-spacing:0.08em; }
+  html[dir="rtl"] .card-title { border-left:none; border-right:3px solid #1e3a5f; padding-left:0; padding-right:12px; }
 
   /* Form */
   .form-group { margin-bottom:13px; }
-  .form-group label { display:block; font-size:0.82rem; font-weight:600; color:#495057; margin-bottom:5px; }
-  .form-group input,.form-group select { width:100%; padding:10px 13px; border:1.5px solid #dee2e6; border-radius:8px; font-size:0.9rem; font-family:inherit; transition:border-color 0.2s; }
-  .form-group input:focus,.form-group select:focus { outline:none; border-color:#1a3a5c; }
+  .form-group label { display:block; font-size:0.71rem; font-weight:700; color:#64748b; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.06em; }
+  .form-group input,.form-group select { width:100%; padding:10px 13px; border:1.5px solid #e2e8f0; border-radius:6px; font-size:0.9rem; font-family:inherit; transition:border-color 0.15s,box-shadow 0.15s; color:#0f172a; }
+  .form-group input:focus,.form-group select:focus { outline:none; border-color:#1e3a5f; box-shadow:0 0 0 3px rgba(30,58,95,0.08); }
 
   /* Buttons */
-  .btn { padding:10px 20px; border:none; border-radius:8px; font-size:0.9rem; font-weight:600; font-family:inherit; cursor:pointer; transition:all 0.2s; }
-  .btn-primary { background:#1a3a5c; color:white; width:100%; margin-top:4px; }
-  .btn-primary:hover { background:#142d48; }
-  .btn-danger { background:#dc3545; color:white; padding:5px 14px; font-size:0.8rem; border-radius:6px; border:none; cursor:pointer; font-family:inherit; font-weight:600; transition:background 0.2s; }
-  .btn-danger:hover { background:#b02a37; }
+  .btn { padding:10px 20px; border:none; border-radius:6px; font-size:0.87rem; font-weight:600; font-family:inherit; cursor:pointer; transition:all 0.15s; letter-spacing:0.02em; }
+  .btn-primary { background:#1e3a5f; color:white; width:100%; margin-top:4px; }
+  .btn-primary:hover { background:#162d4a; }
+  .btn-danger { background:transparent; color:#dc2626; padding:5px 14px; font-size:0.78rem; border-radius:5px; border:1.5px solid #fecaca; cursor:pointer; font-family:inherit; font-weight:600; transition:all 0.15s; }
+  .btn-danger:hover { background:#fef2f2; border-color:#dc2626; }
 
   /* Table */
   table { width:100%; border-collapse:collapse; font-size:0.87rem; }
-  th { background:#f8f9fa; padding:11px 14px; text-align:right; font-weight:600; color:#495057; border-bottom:2px solid #dee2e6; }
+  th { background:#f1f5f9; padding:10px 14px; text-align:right; font-weight:700; color:#475569; border-bottom:2px solid #e2e8f0; font-size:0.71rem; text-transform:uppercase; letter-spacing:0.06em; }
   html[dir="ltr"] th { text-align:left; }
-  td { padding:11px 14px; border-bottom:1px solid #f0f0f0; vertical-align:middle; }
-  tr:hover td { background:#fafafa; }
-  .role-pill { padding:3px 10px; border-radius:10px; font-size:0.78rem; font-weight:600; }
-  .role-admin     { background:#fff3cd; color:#856404; }
-  .role-radiology { background:#cff4fc; color:#055160; }
-  .role-doctor    { background:#d1e7dd; color:#0a3622; }
-  .file-number { font-weight:700; color:#1a3a5c; font-family:monospace; }
+  td { padding:11px 14px; border-bottom:1px solid #f1f5f9; vertical-align:middle; color:#334155; }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:#f8fafc; }
+  .role-pill { padding:3px 9px; border-radius:4px; font-size:0.7rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; }
+  .role-admin     { background:#fef9c3; color:#713f12; border:1px solid #fde68a; }
+  .role-radiology { background:#e0f2fe; color:#075985; border:1px solid #bae6fd; }
+  .role-doctor    { background:#dcfce7; color:#14532d; border:1px solid #bbf7d0; }
+  .file-number { font-weight:700; color:#1e3a5f; font-family:'SF Mono','Fira Code',monospace; font-size:0.84rem; }
 
   /* Stats */
-  .stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:22px; }
-  .stat-card { background:white; border-radius:12px; padding:18px 22px; box-shadow:0 2px 12px rgba(0,0,0,0.07); display:flex; align-items:center; gap:14px; }
-  .stat-icon { font-size:28px; width:52px; height:52px; border-radius:12px; display:flex; align-items:center; justify-content:center; }
-  .stat-icon.blue   { background:#e7f0ff; }
-  .stat-icon.green  { background:#d1e7dd; }
-  .stat-icon.yellow { background:#fff3cd; }
-  .stat-num   { font-size:1.7rem; font-weight:700; color:#1a3a5c; }
-  .stat-label { font-size:0.8rem; color:#6c757d; margin-top:2px; }
+  .stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:24px; }
+  .stat-card { background:white; border-radius:8px; padding:20px 22px; box-shadow:0 1px 6px rgba(0,0,0,0.05); border:1px solid #e2e8f0; display:flex; align-items:center; gap:16px; }
+  .stat-icon { font-size:20px; width:44px; height:44px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .stat-icon.blue   { background:#eff6ff; border:1px solid #bfdbfe; }
+  .stat-icon.green  { background:#f0fdf4; border:1px solid #bbf7d0; }
+  .stat-icon.slate  { background:#f1f5f9; border:1px solid #cbd5e1; }
+  .stat-num   { font-size:1.65rem; font-weight:800; color:#0f172a; letter-spacing:-0.03em; line-height:1; }
+  .stat-label { font-size:0.75rem; color:#64748b; margin-top:3px; font-weight:500; }
 
   /* Checkboxes */
-  .doctors-check-box { border:1.5px solid #dee2e6; border-radius:8px; padding:10px; max-height:160px; overflow-y:auto; }
-  .check-label { display:flex; align-items:center; gap:8px; padding:6px 4px; cursor:pointer; font-size:0.87rem; }
-  .check-label input { width:16px; height:16px; cursor:pointer; }
+  .doctors-check-box { border:1.5px solid #e2e8f0; border-radius:6px; padding:10px; max-height:160px; overflow-y:auto; background:#fafafa; }
+  .check-label { display:flex; align-items:center; gap:8px; padding:6px 4px; cursor:pointer; font-size:0.86rem; color:#334155; }
+  .check-label:hover { color:#0f172a; }
+  .check-label input { width:15px; height:15px; cursor:pointer; accent-color:#1e3a5f; }
 
   /* Empty / Toast */
-  .empty-state { text-align:center; padding:36px; color:#adb5bd; }
-  .empty-state .icon { font-size:36px; margin-bottom:10px; }
-  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); padding:12px 24px; border-radius:10px; font-size:0.88rem; font-weight:600; z-index:9999; opacity:0; transition:opacity 0.3s; pointer-events:none; }
+  .empty-state { text-align:center; padding:40px 20px; color:#94a3b8; }
+  .empty-state .icon { font-size:28px; margin-bottom:10px; opacity:0.35; }
+  .empty-state p { font-size:0.875rem; }
+  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); padding:12px 24px; border-radius:7px; font-size:0.85rem; font-weight:600; z-index:9999; opacity:0; transition:opacity 0.3s; pointer-events:none; box-shadow:0 4px 16px rgba(0,0,0,0.2); }
   .toast.show    { opacity:1; }
-  .toast.success { background:#198754; color:white; }
-  .toast.error   { background:#dc3545; color:white; }
+  .toast.success { background:#16a34a; color:white; }
+  .toast.error   { background:#dc2626; color:white; }
+
+  /* Password Rules */
+  .pwd-rules { margin-top:6px; padding:10px 12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; font-size:0.77rem; }
+  .pwd-rule { display:flex; align-items:center; gap:7px; padding:2px 0; color:#94a3b8; transition:color 0.2s; }
+  .pwd-rule.ok { color:#16a34a; }
+  .pwd-rule .dot { width:7px; height:7px; border-radius:50%; background:#e2e8f0; flex-shrink:0; transition:background 0.2s; }
+  .pwd-rule.ok .dot { background:#16a34a; }
+
+  /* Edit Button */
+  .btn-edit { background:transparent; color:#1e3a5f; padding:5px 14px; font-size:0.78rem; border-radius:5px; border:1.5px solid #bfdbfe; cursor:pointer; font-family:inherit; font-weight:600; transition:all 0.15s; }
+  .btn-edit:hover { background:#eff6ff; border-color:#1e3a5f; }
+
+  /* Auto Badge */
+  .auto-badge { background:#eff6ff; color:#1d4ed8; padding:2px 8px; border-radius:4px; font-size:0.7rem; font-weight:700; border:1px solid #bfdbfe; letter-spacing:0.03em; }
+
+  /* Modal */
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; }
+  .modal-overlay.show { display:flex; }
+  .modal { background:white; border-radius:10px; width:92%; max-width:480px; box-shadow:0 20px 60px rgba(0,0,0,0.25); border:1px solid #e2e8f0; }
+  .modal-header { background:#1e3a5f; color:white; padding:15px 22px; border-radius:10px 10px 0 0; display:flex; justify-content:space-between; align-items:center; }
+  .modal-header h3 { font-size:0.87rem; font-weight:700; letter-spacing:0.02em; }
+  .btn-close { background:rgba(255,255,255,0.1); border:none; color:white; width:28px; height:28px; border-radius:50%; font-size:0.88rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.15s; }
+  .btn-close:hover { background:rgba(255,255,255,0.22); }
+  .modal-body { padding:22px; }
+  .modal-actions { display:flex; gap:10px; margin-top:16px; justify-content:flex-end; }
+  .btn-outline { background:transparent; border:1.5px solid #1e3a5f; color:#1e3a5f; padding:8px 18px; border-radius:6px; font-size:0.87rem; font-weight:600; cursor:pointer; font-family:inherit; transition:all 0.15s; letter-spacing:0.02em; }
+  .btn-outline:hover { background:#1e3a5f; color:white; }
 
   @media(max-width:768px){ .grid-2{grid-template-columns:1fr;} .stats-row{grid-template-columns:1fr;} }
 </style>
@@ -94,14 +127,14 @@
 
 <div class="header">
   <div class="header-left">
-    <div class="header-logo">⚙️</div>
+    <div class="header-monogram">MI</div>
     <div>
       <div class="header-title" data-ar="لوحة تحكم الأدمن"          data-en="Admin Dashboard">لوحة تحكم الأدمن</div>
       <div class="header-sub"   data-ar="Medical Image Encryption System" data-en="Medical Image Encryption System">Medical Image Encryption System</div>
     </div>
   </div>
   <div class="header-right">
-    <span class="admin-badge" data-ar="👑 مدير النظام" data-en="👑 System Admin">👑 مدير النظام</span>
+    <span class="admin-badge" data-ar="مدير النظام" data-en="System Admin">مدير النظام</span>
     <button class="header-lang-btn" onclick="toggleLang()" id="lang-btn">🌐 English</button>
     <button class="btn-logout" onclick="logout()" data-ar="تسجيل الخروج" data-en="Sign Out">تسجيل الخروج</button>
   </div>
@@ -112,23 +145,29 @@
   <!-- Stats -->
   <div class="stats-row">
     <div class="stat-card">
-      <div class="stat-icon blue">👥</div>
+      <div class="stat-icon blue">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
       <div><div class="stat-num" id="stat-users">—</div><div class="stat-label" data-ar="إجمالي المستخدمين" data-en="Total Users">إجمالي المستخدمين</div></div>
     </div>
     <div class="stat-card">
-      <div class="stat-icon green">🗂️</div>
+      <div class="stat-icon green">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10,9 9,9 8,9"/></svg>
+      </div>
       <div><div class="stat-num" id="stat-patients">—</div><div class="stat-label" data-ar="إجمالي المرضى" data-en="Total Patients">إجمالي المرضى</div></div>
     </div>
     <div class="stat-card">
-      <div class="stat-icon yellow">🔒</div>
+      <div class="stat-icon slate">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
       <div><div class="stat-num" id="stat-images">—</div><div class="stat-label" data-ar="صور مشفّرة" data-en="Encrypted Images">صور مشفّرة</div></div>
     </div>
   </div>
 
   <!-- Tabs -->
   <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('users',this)"   data-ar="👥 المستخدمون" data-en="👥 Users">👥 المستخدمون</button>
-    <button class="tab-btn"        onclick="switchTab('patients',this)" data-ar="🗂️ المرضى"     data-en="🗂️ Patients">🗂️ المرضى</button>
+    <button class="tab-btn active" onclick="switchTab('users',this)"   data-ar="المستخدمون" data-en="Users">المستخدمون</button>
+    <button class="tab-btn"        onclick="switchTab('patients',this)" data-ar="المرضى"     data-en="Patients">المرضى</button>
   </div>
 
   <!-- ===== Users Tab ===== -->
@@ -137,7 +176,7 @@
 
       <!-- Add User -->
       <div class="card">
-        <div class="card-title" data-ar="➕ إضافة مستخدم جديد" data-en="➕ Add New User">➕ إضافة مستخدم جديد</div>
+        <div class="card-title" data-ar="إضافة مستخدم جديد" data-en="Add New User">إضافة مستخدم جديد</div>
         <div class="form-group">
           <label data-ar="الاسم الكامل" data-en="Full Name">الاسم الكامل</label>
           <input type="text" id="u-name" data-ar-ph="د. محمد العمري" data-en-ph="Dr. John Smith" placeholder="د. محمد العمري">
@@ -148,7 +187,14 @@
         </div>
         <div class="form-group">
           <label data-ar="كلمة المرور" data-en="Password">كلمة المرور</label>
-          <input type="text" id="u-password" data-ar-ph="اختر كلمة مرور" data-en-ph="Choose a password" placeholder="اختر كلمة مرور">
+          <input type="password" id="u-password" data-ar-ph="مثال: Doctor@123" data-en-ph="e.g. Doctor@123" placeholder="مثال: Doctor@123" oninput="checkPwdRules('u-password','u')">
+          <div class="pwd-rules" id="u-pwd-rules">
+            <div class="pwd-rule" id="u-r1"><div class="dot"></div><span data-ar="8 أحرف على الأقل" data-en="At least 8 characters">8 أحرف على الأقل</span></div>
+            <div class="pwd-rule" id="u-r2"><div class="dot"></div><span data-ar="حرف كبير (A-Z)" data-en="Uppercase (A-Z)">حرف كبير (A-Z)</span></div>
+            <div class="pwd-rule" id="u-r3"><div class="dot"></div><span data-ar="حرف صغير (a-z)" data-en="Lowercase (a-z)">حرف صغير (a-z)</span></div>
+            <div class="pwd-rule" id="u-r4"><div class="dot"></div><span data-ar="رقم (0-9)" data-en="Number (0-9)">رقم (0-9)</span></div>
+            <div class="pwd-rule" id="u-r5"><div class="dot"></div><span data-ar="رمز خاص (!@#$...)" data-en="Special char (!@#$...)">رمز خاص (!@#$...)</span></div>
+          </div>
         </div>
         <div class="form-group">
           <label data-ar="رقم الهوية الوطنية" data-en="National ID">رقم الهوية الوطنية</label>
@@ -163,12 +209,12 @@
             <option value="admin"     data-ar="أدمن"             data-en="Admin">أدمن</option>
           </select>
         </div>
-        <button class="btn btn-primary" onclick="addUser()" data-ar="➕ إضافة المستخدم" data-en="➕ Add User">➕ إضافة المستخدم</button>
+        <button class="btn btn-primary" onclick="addUser()" data-ar="إضافة المستخدم" data-en="Add User">إضافة المستخدم</button>
       </div>
 
       <!-- Users List -->
       <div class="card">
-        <div class="card-title" data-ar="👥 المستخدمون الحاليون" data-en="👥 Current Users">👥 المستخدمون الحاليون</div>
+        <div class="card-title" data-ar="المستخدمون الحاليون" data-en="Current Users">المستخدمون الحاليون</div>
         <div id="users-list"><div class="empty-state"><div class="icon">⏳</div><p>...</p></div></div>
       </div>
 
@@ -181,10 +227,9 @@
 
       <!-- Add Patient -->
       <div class="card">
-        <div class="card-title" data-ar="➕ إضافة مريض جديد" data-en="➕ Add New Patient">➕ إضافة مريض جديد</div>
+        <div class="card-title" data-ar="إضافة مريض جديد" data-en="Add New Patient">إضافة مريض جديد</div>
         <div class="form-group">
-          <label data-ar="رقم الملف الطبي" data-en="Medical File No.">رقم الملف الطبي</label>
-          <input type="text" id="p-file" data-ar-ph="P004" data-en-ph="P004" placeholder="P004">
+          
         </div>
         <div class="form-group">
           <label data-ar="اسم المريض" data-en="Patient Name">اسم المريض</label>
@@ -197,18 +242,39 @@
           </div>
           <p style="font-size:0.77rem;color:#6c757d;margin-top:4px" data-ar="يمكن اختيار أكثر من دكتور" data-en="Multiple selection allowed">يمكن اختيار أكثر من دكتور</p>
         </div>
-        <button class="btn btn-primary" onclick="addPatient()" data-ar="➕ إضافة المريض" data-en="➕ Add Patient">➕ إضافة المريض</button>
+        <button class="btn btn-primary" onclick="addPatient()" data-ar="إضافة المريض" data-en="Add Patient">إضافة المريض</button>
       </div>
 
       <!-- Patients List -->
       <div class="card">
-        <div class="card-title" data-ar="🗂️ المرضى المسجّلون" data-en="🗂️ Registered Patients">🗂️ المرضى المسجّلون</div>
+        <div class="card-title" data-ar="المرضى المسجّلون" data-en="Registered Patients">المرضى المسجّلون</div>
         <div id="patients-list"><div class="empty-state"><div class="icon">⏳</div><p>...</p></div></div>
       </div>
 
     </div>
   </div>
 
+</div>
+
+<!-- Modal تعديل أطباء المريض -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 data-ar="تعديل الأطباء المسؤولين" data-en="Edit Assigned Physicians">تعديل الأطباء المسؤولين</h3>
+      <button class="btn-close" onclick="closeEditModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p id="edit-patient-name" style="font-weight:700;color:#1e3a5f;margin-bottom:14px;font-size:0.92rem"></p>
+      <div class="form-group">
+        <label data-ar="الأطباء المسؤولون" data-en="Assigned Physicians">الأطباء المسؤولون</label>
+        <div class="doctors-check-box" id="edit-doctors-checkboxes"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-outline" onclick="closeEditModal()" data-ar="إلغاء" data-en="Cancel">إلغاء</button>
+        <button class="btn btn-primary" style="width:auto" onclick="saveEditDoctors()" data-ar=" حفظ" data-en=" Save"> حفظ</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -221,32 +287,64 @@
     ar: {
       langBtn:        '🌐 English',
       rolePills:      { admin:'أدمن', radiology:'دكتور أشعة', doctor:'دكتور مسؤول' },
-      colName:'الاسم', colUsername:'اسم الدخول', colRole:'الدور', colDelete:'حذف',
-      colFile:'رقم الملف', colPatient:'اسم المريض', colDoctors:'الأطباء المسؤولون',
-      protected:'محمي',
-      btnDelete:'🗑️ حذف',
-      emptyUsers:'لا يوجد مستخدمون',
-      emptyPatients:'لا يوجد مرضى',
-      fillAll:'يرجى تعبئة جميع الحقول',
-      selectDoc:'اختر دكتوراً مسؤولاً على الأقل',
-      noDoctors:'لا يوجد أطباء مسؤولون — أضف دكتوراً أولاً',
-      confirmDelUser:'هل تريد حذف المستخدم',
-      confirmDelPt:'هل تريد حذف المريض',
+      colName:        'الاسم',
+      colUsername:    'اسم الدخول',
+      colRole:        'الدور',
+      colDelete:      'حذف',
+      colActions:     'إجراءات',
+      colFile:        'رقم الملف',
+      colPatient:     'اسم المريض',
+      colDoctors:     'الأطباء المسؤولون',
+      selfDel:        'حسابك أنت',
+      protected:      'محمي',
+      btnDelete:      'حذف',
+      btnEdit:        'تعديل',
+      emptyUsers:     'لا يوجد مستخدمون',
+      emptyPatients:  'لا يوجد مرضى',
+      fillAll:        'يرجى تعبئة جميع الحقول',
+      selectDoc:      'اختر دكتوراً مسؤولاً على الأقل',
+      noDoctors:      'لا يوجد أطباء مسؤولون — أضف دكتوراً أولاً',
+      confirmDelUser: 'هل تريد حذف المستخدم',
+      confirmDelPt:   'هل تريد حذف المريض وجميع صوره',
+      addedUser:      'تم إضافة المستخدم بنجاح',
+      addedPatient:   'تم إضافة المريض بنجاح',
+      deletedUser:    'تم حذف المستخدم بنجاح',
+      deletedPatient: 'تم حذف المريض وجميع صوره بنجاح',
+      savedDoctors:   'تم تحديث الأطباء المسؤولين بنجاح',
+      autoFile:       'يُضاف تلقائياً',
+      logout:         'تسجيل الخروج',
+      adminBadge:     'مدير النظام',
     },
     en: {
       langBtn:        '🌐 عربي',
       rolePills:      { admin:'Admin', radiology:'Radiologist', doctor:'Physician' },
-      colName:'Name', colUsername:'Username', colRole:'Role', colDelete:'Delete',
-      colFile:'File No.', colPatient:'Patient Name', colDoctors:'Assigned Physicians',
-      protected:'Protected',
-      btnDelete:'🗑️ Delete',
-      emptyUsers:'No users found',
-      emptyPatients:'No patients found',
-      fillAll:'Please fill all fields',
-      selectDoc:'Select at least one physician',
-      noDoctors:'No physicians found — add a doctor first',
-      confirmDelUser:'Delete user',
-      confirmDelPt:'Delete patient',
+      colName:        'Name',
+      colUsername:    'Username',
+      colRole:        'Role',
+      colDelete:      'Delete',
+      colActions:     'Actions',
+      colFile:        'File No.',
+      colPatient:     'Patient Name',
+      colDoctors:     'Assigned Physicians',
+      selfDel:        'Your account',
+      protected:      'Protected',
+      btnDelete:      'Delete',
+      btnEdit:        'Edit',
+      emptyUsers:     'No users found',
+      emptyPatients:  'No patients found',
+      fillAll:        'Please fill all fields',
+      selectDoc:      'Select at least one physician',
+      noDoctors:      'No physicians found — add a doctor first',
+      confirmDelUser: 'Delete user',
+      confirmDelPt:   'Delete patient and all their images',
+      addedUser:      'User added successfully',
+      addedPatient:   'Patient added successfully',
+      deletedUser:    'User deleted successfully',
+      deletedPatient: 'Patient and all images deleted successfully',
+      savedDoctors:   'Assigned physicians updated successfully',
+      autoFile:       'Auto-generated',
+      logout:         'Sign Out',
+      adminBadge:     'System Admin',
     }
   };
 
@@ -259,18 +357,22 @@
     document.documentElement.lang = lang;
     document.documentElement.dir  = isAr ? 'rtl' : 'ltr';
 
-    // النصوص
-    document.querySelectorAll(`[data-${lang}]`).forEach(el => {
-      if (el.tagName === 'OPTION') el.textContent = el.getAttribute(`data-${lang}`);
-      else el.textContent = el.getAttribute(`data-${lang}`);
+    // النصوص العادية
+    document.querySelectorAll('[data-ar]').forEach(el => {
+      el.textContent = el.getAttribute(`data-${lang}`) || el.getAttribute('data-ar');
     });
 
     // Placeholders
     document.querySelectorAll('[data-ar-ph]').forEach(el => {
-      el.placeholder = el.getAttribute(`data-${lang}-ph`);
+      el.placeholder = el.getAttribute(`data-${lang}-ph`) || el.getAttribute('data-ar-ph');
     });
 
+    // أزرار اللغة والخروج
     document.getElementById('lang-btn').textContent = t('langBtn');
+    const lo = document.querySelector('.btn-logout');
+    if (lo) lo.textContent = t('logout');
+    const ab = document.querySelector('.admin-badge');
+    if (ab) ab.textContent = t('adminBadge');
   }
 
   function toggleLang() {
@@ -349,9 +451,9 @@
         <td>${u.name}</td>
         <td style="font-family:monospace">${u.username}</td>
         <td><span class="role-pill ${roleClass[u.role]}">${t('rolePills')[u.role]}</span></td>
-        <td>${u.role !== 'admin'
-          ? `<button class="btn-danger" onclick="deleteUser(${u.id},'${u.name}')">${t('btnDelete')}</button>`
-          : `<span style="color:#adb5bd;font-size:0.8rem">${t('protected')}</span>`}
+        <td>${u.id === adminUser.id
+          ? `<span style="color:#94a3b8;font-size:0.78rem">${t('selfDel')}</span>`
+          : `<button class="btn-danger" onclick="deleteUser(${u.id},'${u.name}')">${t('btnDelete')}</button>`}
         </td>
       </tr>`).join('')}
     </tbody></table>`;
@@ -373,7 +475,7 @@
     const data = await res.json();
     if (!res.ok) { showToast(data.detail,'error'); return; }
 
-    showToast(data.message,'success');
+    showToast(t('addedUser'),'success');
     ['u-name','u-username','u-password','u-national-id'].forEach(id => document.getElementById(id).value='');
     document.getElementById('u-role').value = '';
     loadUsers(); loadStats();
@@ -381,10 +483,10 @@
 
   async function deleteUser(id, name) {
     if (!confirm(`${t('confirmDelUser')} "${name}"?`)) return;
-    const res  = await fetch(`/admin/users/${id}`, { method:'DELETE' });
+    const res  = await fetch(`/admin/users/${id}?current_admin_id=${adminUser.id}`, { method:'DELETE' });
     const data = await res.json();
     if (!res.ok) { showToast(data.detail,'error'); return; }
-    showToast(data.message,'success');
+    showToast(t('deletedUser'),'success');
     loadUsers(); loadStats();
   }
 
@@ -405,13 +507,16 @@
       <th>${t('colFile')}</th>
       <th>${t('colPatient')}</th>
       <th>${t('colDoctors')}</th>
-      <th>${t('colDelete')}</th>
+      <th>${t('colActions')}</th>
     </tr></thead><tbody>
       ${patients.map(p => `<tr>
         <td><span class="file-number">${p.file_number}</span></td>
         <td>${p.name}</td>
         <td style="font-size:0.82rem;color:#495057">${p.doctors.map(d=>d.name).join('، ')||'—'}</td>
-        <td><button class="btn-danger" onclick="deletePatient(${p.id},'${p.name}')">${t('btnDelete')}</button></td>
+        <td style="display:flex;gap:6px;align-items:center">
+          <button class="btn-edit" onclick="openEditModal(${p.id},'${p.name}',${JSON.stringify(p.doctors.map(d=>d.id))})">${t('btnEdit')}</button>
+          <button class="btn-danger" onclick="deletePatient(${p.id},'${p.name}')">${t('btnDelete')}</button>
+        </td>
       </tr>`).join('')}
     </tbody></table>`;
   }
@@ -431,23 +536,21 @@
   }
 
   async function addPatient() {
-    const file_number = document.getElementById('p-file').value.trim();
-    const name        = document.getElementById('p-name').value.trim();
-    const checked     = document.querySelectorAll('#doctors-checkboxes input:checked');
-    const doctor_ids  = Array.from(checked).map(cb => parseInt(cb.value));
+    const name       = document.getElementById('p-name').value.trim();
+    const checked    = document.querySelectorAll('#doctors-checkboxes input:checked');
+    const doctor_ids = Array.from(checked).map(cb => parseInt(cb.value));
 
-    if (!file_number||!name) { showToast(t('fillAll'),'error'); return; }
-    if (!doctor_ids.length)  { showToast(t('selectDoc'),'error'); return; }
+    if (!name)             { showToast(t('fillAll'),'error');   return; }
+    if (!doctor_ids.length){ showToast(t('selectDoc'),'error'); return; }
 
     const res  = await fetch('/admin/patients', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ file_number, name, doctor_ids })
+      body: JSON.stringify({ name, doctor_ids })
     });
     const data = await res.json();
     if (!res.ok) { showToast(data.detail,'error'); return; }
 
-    showToast(data.message,'success');
-    document.getElementById('p-file').value = '';
+    showToast(`${t('addedPatient')} — ${data.file_number}`,'success');
     document.getElementById('p-name').value = '';
     document.querySelectorAll('#doctors-checkboxes input').forEach(cb => cb.checked=false);
     loadPatients(); loadStats();
@@ -458,9 +561,67 @@
     const res  = await fetch(`/admin/patients/${id}`, { method:'DELETE' });
     const data = await res.json();
     if (!res.ok) { showToast(data.detail,'error'); return; }
-    showToast(data.message,'success');
+    showToast(t('deletedPatient'),'success');
     loadPatients(); loadStats();
   }
+
+  // ======================================================
+  // التحقق من الأدمن
+  // ======================================================
+  const adminUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+  if (!adminUser || adminUser.role !== 'admin') { window.location.href = '/'; }
+
+  // ======================================================
+  // Password Rules
+  // ======================================================
+  function checkPwdRules(inputId, prefix) {
+    const pwd = document.getElementById(inputId).value;
+    const chk = (id, test) => document.getElementById(id).classList.toggle('ok', test);
+    chk(`${prefix}-r1`, pwd.length >= 8);
+    chk(`${prefix}-r2`, /[A-Z]/.test(pwd));
+    chk(`${prefix}-r3`, /[a-z]/.test(pwd));
+    chk(`${prefix}-r4`, /[0-9]/.test(pwd));
+    chk(`${prefix}-r5`, /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pwd));
+  }
+
+  // ======================================================
+  // تعديل أطباء المريض
+  // ======================================================
+  let editPatientId = null;
+
+  async function openEditModal(patientId, patientName, currentDoctorIds) {
+    editPatientId = patientId;
+    document.getElementById('edit-patient-name').textContent = patientName;
+    const res     = await fetch('/admin/doctors');
+    const doctors = await res.json();
+    const cont    = document.getElementById('edit-doctors-checkboxes');
+    cont.innerHTML = doctors.map(d => `
+      <label class="check-label">
+        <input type="checkbox" value="${d.id}" ${currentDoctorIds.includes(d.id)?'checked':''}> ${d.name}
+      </label>`).join('');
+    document.getElementById('edit-modal').classList.add('show');
+  }
+
+  function closeEditModal() {
+    document.getElementById('edit-modal').classList.remove('show');
+    editPatientId = null;
+  }
+
+  async function saveEditDoctors() {
+    const checked    = document.querySelectorAll('#edit-doctors-checkboxes input:checked');
+    const doctor_ids = Array.from(checked).map(cb => parseInt(cb.value));
+    if (!doctor_ids.length) { showToast(t('selectDoc'),'error'); return; }
+    const res  = await fetch(`/admin/patients/${editPatientId}/doctors`, {
+      method:'PUT', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ doctor_ids })
+    });
+    const data = await res.json();
+    if (!res.ok) { showToast(data.detail,'error'); return; }
+    showToast(t('savedDoctors'),'success');
+    closeEditModal(); loadPatients();
+  }
+
+  document.getElementById('edit-modal').addEventListener('click',function(e){if(e.target===this)closeEditModal();});
 
   // ======================================================
   // الخروج
