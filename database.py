@@ -4,7 +4,7 @@ from datetime import datetime
 import hashlib
 import re
 
-engine = create_engine("sqlite:///medical.db", connect_args={"check_same_thread": False})
+engine = create_engine("sqlite:////tmp/medical.db", connect_args={"check_same_thread": False})
 Base = declarative_base()
 SessionLocal = sessionmaker(bind=engine)
 
