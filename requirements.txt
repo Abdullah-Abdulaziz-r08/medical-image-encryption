@@ -6,3 +6,4 @@ sqlalchemy
 python-multipart
 azure-keyvault-secrets
 azure-identity
+python-dotenv

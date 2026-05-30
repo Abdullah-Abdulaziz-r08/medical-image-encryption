@@ -6,9 +6,13 @@ from pathlib import Path
 from pydantic import BaseModel
 from typing import List, Optional
 import base64
+import os
+from dotenv import load_dotenv
 
 from azure.keyvault.secrets import SecretClient
 from azure.identity import ClientSecretCredential
+
+load_dotenv()
 
 from database import (get_db, init_db, User, Patient, MedicalImage,
                       hash_password, verify_password, validate_password,
@@ -18,10 +22,10 @@ from encryption import encrypt, decrypt, compute_hash, bytes_to_array, array_to_
 app = FastAPI()
 
 # ===== Azure Key Vault =====
-_VAULT_URL     = "https://medcrypt-vault-2025.vault.azure.net"
-_TENANT_ID     = "514faa19-8c84-4cef-8ae9-2b9dbce933cd"
-_CLIENT_ID     = "d136ebca-3d29-41a4-8bad-b4bb7caa6867"
-_CLIENT_SECRET = "G~D8Q~r4agRj0E4ce-s9fQ64XRODSWjTdM5xlao8"
+_VAULT_URL     = os.getenv("AZURE_VAULT_URL")
+_TENANT_ID     = os.getenv("AZURE_TENANT_ID")
+_CLIENT_ID     = os.getenv("AZURE_CLIENT_ID")
+_CLIENT_SECRET = os.getenv("AZURE_CLIENT_SECRET")
 
 def get_secret_key() -> float:
     credential = ClientSecretCredential(
